@@ -257,48 +257,247 @@ by answering the quiz created by someone else (professor or classmates).
     
 Main benefit is that the application can be downloaded on the SmartPhones
 and so the students are able to create their own quizes or answer the questions on the way.</p>
-<p>Additional Information: Gratitude and credit to my supervisor Christian Fleiner.</p> 
+<p>Additional Information: Gratitude and credit to my supervisor Christian Fleiner.</p>
+
+<p>Project Name: <em>Personal inventory system</em></p>
+<p>Project Type: I will be working on this project as a working student at my home university in Germany.</p>
+<p>Vision Statement: The personal inventory system is a web application for everyone who would like to keep an overview about his/her things. This inventory system records the things he/she borrows to friends, acquaintances or just strange people. Also some chairs at universities or institution would use this kind of small library system.
+
+Let me give an example to illustrate this idea. I own 10 things which I regularly borrow to my friends or acquaintances. Hence, I want to have an overview of how many things I already borrowed to my friends and how many I still have at home. If they exceed the deadline for giving me back the thing, they should receive an email or a message on WhatsApp automatically.</p>
+
+<p>Additional Information: Gratitude and credit to my supervisor Christian Fleiner.</p>
+
+<p>An user provides his/her inventory of the things into the user interface.
+How can be these data stored? How can an user figure out what things were borrowed and what things he/she still has at homer/in a office?
+For this, the application server is necessary which applies the business logic to process the above-mentioned questions.
+But something is still missing, which is database server - persistency. Data which were written into the user interface can be stored in the database server thanks to the application server. Moreover, thanks to this application server the data can be extracted from the database in order to figure out what things an user already borrowed and what things he/she still has.
+</p>
+
 
 <h1 id="ex---architectural-decision-records"><span class='task'>2.</span>  Architectural Decision Records</h1>
 <section class="instructions"><p>Software architecture is about making design decisions that will impact the quality of the software you plan to build.</p>
 <p>Let&#39;s practice how to describe an architectural decision. We will keep using ADRs to document architectural decisions in the rest of the model.</p>
 <p>Use the following template to capture one or more architectural design decisions in the context of your project domain</p>
-<section class="pass"><span>&starf;&star;&star;: </span>1 ADR</section><section class="ok"><span>&starf;&starf;&star;: </span>2 ADR</section><section class="exceed"><span>&starf;&starf;&starf;: </span>&gt;2 ADR</section></section><p><h3>Architectural Decision Record Template</h3><h2 id="adr-0-template">ADR #0 (Template)</h2>
-<ol>
-<li>What did you decide?</li>
-</ol>
-<p>Give a short title of solved problem and solution</p>
-<ol start="2">
-<li>What was the context for your decision?</li>
-</ol>
-<p>What is the goal you are trying to achieve?</p>
-<p>What are the constraints?</p>
-<p>What is the scope of your decision? Does it affect the entire architecture?</p>
-<ol start="3">
-<li>What is the problem you are trying to solve?</li>
-</ol>
-<p>You may want to articulate the problem in form of a question.</p>
-<ol start="4">
-<li>Which alternative options did you consider?</li>
-</ol>
-<p>List at least 3 options</p>
-<ol start="5">
-<li>Which one did you choose?</li>
-</ol>
-<p>Pick one of the options as the outcome of your decision</p>
-<ol start="6">
-<li>What is the main reason for that?</li>
-</ol>
-<p>List the positive consequences (pros) of your decision:</p>
-<ul>
-<li>quality improvement</li>
-<li>satisfaction of external constraint</li>
+<section class="pass"><span>&starf;&star;&star;: </span>1 ADR</section><section class="ok"><span>&starf;&starf;&star;: </span>2 ADR</section><section class="exceed"><span>&starf;&starf;&starf;: </span>&gt;2 ADR</section></section><p>
+    
+1) Choose Programming language -> pick Java -> choose the build system, e. g. Gradle, Maven
+-> choose the language version
+-> pick Python + Java
+Java has many resources and huge community
+2) API:RESTful
+3) commercialization: software as a service
+4) separate front-end from back-end
+5) Using SPRING framework to develop web back-end
+6) windows or linux?
+7) app will be built as mobile application
+8) what is OS? 
+
+
+1) C++, Python, Java
+2) REST API, custom protocol
+3) one-time purchase of software package, software as a service
+5) with Django, with ASP.NET core, Spring framework,...
+7) desktop app, web app, mobile app
+8) Android, iOS, cross-platform development
+    
+<h3>Architectural Decision Record Template</h3>
+<h2 id="adr-1-template">ADR 1</h2>
+<ol><li>What did you decide?</li></ol>
+<ul>In order to store data (persistency tier) I need a relational database.</ul>
+
+<ol start="2"><li>What was the context for your decision?</li></ol>
+<ul>The web application will attract many users. Hence, we need to store the huge amount of data in a secure way.
+Relational database is perfect fit for web application.
+Therefore, the goal is to store data in open source relational database for web applications.
 </ul>
-<p>If any, list the negative consequences (cons)</p>
+
+<ul><p>What is the scope of your decision? Does it affect the entire architecture?</p></ul>
+<ul>It affects the the application and database server. User interface stays untouched.</ul>
+
+
+<ol start="3"><li>What is the problem you are trying to solve?</li></ol>
+<ul>Where can I store the data?</ul>
+
+<ol start="4"><li>Which alternative options did you consider?</li></ol>
+<ul><p>List at least 3 options:</p></ul>
 <ul>
-<li>quality degradation</li>
+    <li>Relational database</li>
+    <li>NoSQL database - to store unstructured/semi-structured data - MongoDB</li>
+    <li>Cloud database - Microsoft Azure SQL Database</li>
 </ul>
-</p>
+
+<ol start="5"><li>Which one did you choose?</li></ol>
+<ul><p>Relational Database</p></ul>
+
+
+<ol start="6"><li>What is the main reason for that?</li></ol>
+<ul><b>Advantages:</b></ul>
+<ul>
+    <li>High security</li>
+    <li>Multi User</li>
+    <li>Avoid redundancy</li>
+    <li>Easy access to data/Easy query</li>
+    <li>Data integrity</li>
+    <li>Flexibility - CRUD</li>
+</ul>
+<ul><b>Disadvantages:</b></ul>
+<ul>
+    <li>High physical memory/storage</li>
+    <li>Hight initial costs</li>
+</ul>
+
+
+<h2 id="adr-2-template">ADR 2</h2>
+<ol><li>What did you decide?</li></ol>
+<ul>I pick MySQL as relational database to store data.</ul>
+
+
+<ol start="2"><li>What was the context for your decision?</li></ol>
+<ul>The web application will attract many users. Hence, we need to store the huge amount of data in relational database.
+It is necessary to choose the relational database which has a good match to Python. Therefore, my goal is to store data in a efficient way with respect to the programming language.
+</ul>
+
+<!--
+<ul><p>What are the constraints?</p></ul>
+<ul></ul>
+--> 
+
+<ul><p>What is the scope of your decision? Does it affect the entire architecture?</p></ul>
+<ul>It affects the application and database server. User interface stays untouched.</ul>
+
+
+<ol start="3"><li>What is the problem you are trying to solve?</li></ol>
+<ul>What kind of relational database am I going to choose?</ul>
+
+
+<ol start="4"><li>Which alternative options did you consider?</li></ol>
+<ul><p>List at least 3 options</p></ul>
+<ul>
+    <li>MySQL</li>
+    <li>PostgreSQL</li>
+    <li>MariaDB</li>
+</ul>
+
+
+<ol start="5"><li>Which one did you choose?</li></ol>
+<ul><p>MySQL</p></ul>
+
+
+<ol start="6"><li>What is the main reason for that?</li></ol>
+<ul><b>Advantages:</b></ul>
+<ul>
+    <li>Good match with Python - Easy use to connect with Python - driver "MySQL Connector"</li>
+    <li>Data security</li>
+    <li>Scalability</li>
+    <li>High performance</li>
+</ul>
+
+<ul><b>Disdvantages:</b></ul>
+<ul>
+    <li>Impedance mismatch between object-oriented and the relational world.</li>
+    <li>Slower performance due to joins.</li>
+</ul>
+
+
+
+<h2 id="adr-3-template">ADR 3</h2>
+<ol><li>What did you decide?</li></ol>
+<ul>I pick Python as programming language.</ul>
+
+
+<ol start="2"><li>What was the context for your decision?</li></ol>
+<ul>We have choosen MySQL as relational database for web application. Consequently, we have to choose the programming language. MySQL can be easily connected to Python with Django framework.
+</ul>
+
+<!--
+<ul><p>What are the constraints?</p></ul>
+<ul></ul>
+--> 
+
+<ul><p>What is the scope of your decision? Does it affect the entire architecture?</p></ul>
+<ul>It affects the application server. User interface stays untouched.</ul>
+
+
+<ol start="3"><li>What is the problem you are trying to solve?</li></ol>
+<ul>What programming language fits to our needs and experience?</ul>
+
+
+<ol start="4"><li>Which alternative options did you consider?</li></ol>
+<ul><p>List at least 3 options</p></ul>
+<ul>
+    <li>Python</li>
+    <li>Java</li>
+    <li>C++</li>
+</ul>
+
+
+<ol start="5"><li>Which one did you choose?</li></ol>
+<ul><p>Python</p></ul>
+
+
+<ol start="6"><li>What is the main reason for that?</li></ol>
+<ul><b>Advantages:</b></ul>
+<ul>
+    <li>Experience with Python, Flask and MySQL - good combination</li>
+    <li>Flexible - intregration with other programming languages</li>
+    <li>Rich standard library</li>
+    <li>Huge Python community</li>
+</ul>
+
+<ul><b>Disdvantages:</b></ul>
+<ul>
+    <li>Speed limitations</li>
+</ul>
+
+
+<h2 id="adr-4-template">ADR 4</h2>
+<ol><li>What did you decide?</li></ol>
+<ul>I pick Django as Framework.</ul>
+
+
+<ol start="2"><li>What was the context for your decision?</li></ol>
+<ul>We have choosen MySQL as relational database for web application and python as programming language. MySQL can be easily connected to Python with Django web framework.
+</ul>
+
+<!--
+<ul><p>What are the constraints?</p></ul>
+<ul></ul>
+--> 
+
+<ul><p>What is the scope of your decision? Does it affect the entire architecture?</p></ul>
+<ul>It affects the application server. User interface stays untouched.</ul>
+
+
+<ol start="3"><li>What is the problem you are trying to solve?</li></ol>
+<ul>What framework does match to Python and MySQL?</ul>
+
+
+<ol start="4"><li>Which alternative options did you consider?</li></ol>
+<ul><p>List at least 3 options</p></ul>
+<ul>
+    <li>Django</li>
+    <li>Pyramid</li>
+    <li>Flask - microframework</li>
+</ul>
+
+
+<ol start="5"><li>Which one did you choose?</li></ol>
+<ul><p>Django</p></ul>
+
+
+<ol start="6"><li>What is the main reason for that?</li></ol>
+<ul><b>Advantages:</b></ul>
+<ul>
+    <li>Django works well with Python and MySQL</li>
+    <li>Better Scalability compared to the Flask</li>
+</ul>
+
+<ul><b>Disdvantages:</b></ul>
+<ul>
+    <li>Monolithic architecture</li>
+</ul>
+
+
 <h1 id="ex---quality-attribute-scenario"><span class='task'>3.</span>  Quality Attribute Scenario</h1>
 <section class="instructions"><ol>
 <li><p>Pick a scenario for a specific quality attribute. Describe it with natural language.</p>
