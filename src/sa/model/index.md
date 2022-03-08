@@ -1,7 +1,7 @@
-title: 
+title
 Software Architecture Model
 ---
- 
+
 # Getting started
 
 You will use [Markdown](https://www.markdownguide.org/cheat-sheetplan) and [PlantUML](https://plantuml.com/) to describe a software architecture model about your own project.
@@ -12,9 +12,7 @@ When you are done with each task, please push so we can give you feedback about 
 
 We begin by selecting a suitable project domain.
 
-
-
-# Ex - Domain Selection 
+# Ex - Domain Selection
 
 {.instructions
 
@@ -45,15 +43,15 @@ Hint: to choose a meaningful project look at the rest of the modeling tasks whic
 
 }
 
-Project Name: *My Project*
+Project Name: *Personal inventory system*
 
-Project Type:
+Project Type: I will be working on this project as a working student at my home university in Germany.
 
-Vision Statement:
+Vision Statement: The personal inventory system is a web application for everyone who would like to keep an overview about his/her things. This inventory system records the things he/she borrows to friends, acquaintances or just strange people. Also some chairs at universities or institution would use this kind of small library system.
+Let me give an example to illustrate this idea. I own 10 things which I regularly borrow to my friends or acquaintances. Hence, I want to have an overview of how many things I already borrowed to my friends and how many I still have at home. If they exceed the deadline for giving me back the thing, they should receive an email or a message on WhatsApp automatically.
+Another use of this inventory system would be to write down all the things I have. So, I would keep track of how many years I have these things so that I can do preventive maintenance after certain time in effective way.
 
-Additional Information:
-
-
+Additional Information: Gratitude and credit to my supervisor Christian Fleiner.
 
 # Ex - Architectural Decision Records
 
@@ -75,6 +73,143 @@ Exceed: >2 ADR
 
 ![Architectural Decision Record Template](./examples/decision-template.madr)
 
+### ADR 1
+
+* What did you decide?
+    In order to store data (persistency tier) I need a relational database.
+
+* What was the context for your decision?
+    The web application will attract many users. Hence, we need to store the huge amount of data in a secure way.
+    Relational database is perfect fit for web application.
+    Therefore, the goal is to store data in open source relational database for web applications.
+
+* What is the scope of your decision? Does it affect the entire architecture?
+    It affects the the application and database server. User interface stays untouched.
+
+* What is the problem you are trying to solve?
+    Where can I store the data?
+
+* Which alternative options did you consider?
+    List at least 3 options:
+
+  * Relational database
+  * NoSQL database (to store unstructured/semi-structured data, e. g. MongoDB)
+  * RDF Triple Stores
+
+* Which one did you choose?
+    Relational Database
+
+* What is the main reason for that?
+    **Advantages:**
+  * High security
+  * Multi User
+  * Avoid redundancy
+  * Easy access to data/Easy query
+  * Data integrity
+  * Flexibility - CRUD
+
+    **Disadvantages:**
+  * High physical memory/storage
+  * Hight initial costs
+
+### ADR 2
+
+* What did you decide?
+    I pick MySQL as relational database to store data.
+
+* What was the context for your decision?
+    The web application will attract many users. Hence, we need to store the huge amount of data in relational database.
+    It is necessary to choose the relational database which has a good match to Python. Therefore, my goal is to store data in a efficient way with respect to the programming language.
+
+* What is the scope of your decision? Does it affect the entire architecture?
+    It affects the application and database server. User interface stays untouched.
+
+* What is the problem you are trying to solve?
+    What kind of relational database am I going to choose?
+
+* Which alternative options did you consider?
+    List at least 3 options
+  * MySQL
+  * PostgreSQL
+  * MariaDB
+
+* Which one did you choose?
+    MySQL
+
+* What is the main reason for that?
+    **Advantages:**
+  * Good match with Python - Easy use to connect with Python - driver "MySQL Connector"
+  * Data security
+  * Scalability
+  * High performance
+
+    **Disdvantages:**
+  * Impedance mismatch between object-oriented and the relational world.
+  * Slower performance due to joins.
+
+### ADR 3
+
+* What did you decide?
+    I pick Django as Framework.
+
+* What was the context for your decision?
+    We have choosen MySQL as relational database for web application and python as programming language. MySQL can be easily connected to Python with Django web framework.
+
+* What is the scope of your decision? Does it affect the entire architecture?
+    It affects the application server. User interface stays untouched.
+
+* What is the problem you are trying to solve?
+    What framework does match to Python and MySQL?
+
+* Which alternative options did you consider?
+List at least 3 options
+  * Django
+  * Pyramid
+  * Flask - microframework
+
+* Which one did you choose?
+    Django
+
+* What is the main reason for that?
+    **Advantages:**
+  * Django works well with Python and MySQL
+  * Better Scalability compared to the Flask
+
+    **Disdvantages:**
+  * Monolithic architecture
+
+### ADR 4
+
+* What did you decide?
+    I pick Python as programming language.
+
+* What was the context for your decision?
+    We have choosen MySQL as relational database for web application. Consequently, we have to choose the programming language. MySQL can be easily connected to Python with Django framework.
+
+* What is the scope of your decision? Does it affect the entire architecture?
+    It affects the application server. User interface stays untouched.
+
+* What is the problem you are trying to solve?
+    What programming language fits to our needs and experience?
+
+* Which alternative options did you consider?
+    List at least 3 options:
+  * Python
+  * Java
+  * C++
+
+* Which one did you choose?
+    Python
+
+* What is the main reason for that?
+    **Advantages:**
+  * Experience with Python, Flask and MySQL - good combination
+  * Flexible - intregration with other programming languages
+  * Rich standard library
+  * Huge Python community
+
+    **Disdvantages:**
+  * Speed limitations
 
 # Ex - Quality Attribute Scenario
 
@@ -120,9 +255,10 @@ Exceed: >6 scenarios using challenging qualities
 
 }
 
+
 ## Example Scenario
 
-Quality: _Recoverability_
+Quality: *Recoverability*
 
 Scenario: In case of power failure, rebooting the system should take up to 20 seconds.
 
@@ -146,7 +282,196 @@ Source -> [System] : "Boot"
 
 @enduml
 ```
- 
+
+## 1 scenario
+
+Quality: *Feasability - Time to market*
+
+Scenario: How many months does it tak to launch the minimal viable product to the market?
+
+```puml
+@startuml
+
+skinparam componentStyle rectangle
+skinparam monochrome true
+skinparam shadowing false
+
+rectangle "Development Time" {
+
+rectangle "Our company" as Source
+rectangle "5 months" as Measure
+
+Source -> [Software] : "Investing into software development"
+
+[Software] -> [Measure] : "software is ready"
+
+}
+
+@enduml
+```
+
+## 2 scenario
+
+Quality: *Testability*
+
+Scenario: How many minutes does it take in average to perform unit test?
+
+```puml
+@startuml
+
+skinparam componentStyle rectangle
+skinparam monochrome true
+skinparam shadowing false
+
+rectangle "Development time" {
+
+rectangle "Unit Tester" as Source
+rectangle "3 min" as Measure
+
+Source -> [Component of System] : "performs unit test"
+
+[Component of System] -> [Measure] : "provide access to state values"
+
+}
+
+@enduml
+```
+
+## 3 scenario
+
+Quality: *Usability - Learnability*
+
+Scenario: How many minutes does it take in average for end user to learn the system features?
+
+```puml
+@startuml
+
+skinparam componentStyle rectangle
+skinparam monochrome true
+skinparam shadowing false
+
+rectangle "Runtime" {
+
+rectangle "End User" as Source
+rectangle "Within 5 min" as Measure
+
+Source -> [System] : "wants to learn system features"
+
+[System] -> [Measure] : "support learn system features"
+
+}
+
+@enduml
+```
+
+## 4 scenario
+
+Quality: *Usability - Memorability*
+
+Scenario: How many minutes does it take in average for end user to use the web app after certain time?
+
+```puml
+@startuml
+
+skinparam componentStyle rectangle
+skinparam monochrome true
+skinparam shadowing false
+
+rectangle "Runtime" {
+
+rectangle "User" as Source
+rectangle "Within 2 min" as Measure
+
+Source -> [System] : "Login after 3 months"
+
+[System] -> [Measure] : "User uses web app productively"
+
+}
+
+@enduml
+```
+
+## 5 scenario
+
+Quality: *Security - Authentication*
+
+Scenario: How many minutes does it take in average to authenticate the user?
+
+```puml
+@startuml
+
+skinparam componentStyle rectangle
+skinparam monochrome true
+skinparam shadowing false
+
+rectangle "Runtime" {
+
+rectangle "User" as Source
+rectangle "Within 1 min" as Measure
+
+Source -> [System] : "Tries to login"
+
+[System] -> [Measure] : "logged successfully"
+
+}
+
+@enduml
+```
+
+## 6 scenario
+
+Quality: *Performance*
+
+Scenario: How many minutes in average does it take to proceed the requests from users?
+
+```puml
+@startuml
+
+skinparam componentStyle rectangle
+skinparam monochrome true
+skinparam shadowing false
+
+rectangle "Normal operation mode" {
+
+rectangle "Users" as Source
+rectangle "Latency up to 2 sec" as Measure
+
+Source -> [System] : "Events arrive"
+
+[System] -> [Measure] : "Processes events"
+
+}
+
+@enduml
+```
+
+## 7 scenario
+
+Quality: *Modifiability*
+
+Scenario: How many minutes in average does it take to change graphical user interface?
+
+```puml
+@startuml
+
+skinparam componentStyle rectangle
+skinparam monochrome true
+skinparam shadowing false
+
+rectangle "Design Time" {
+
+rectangle "Developer" as Source
+rectangle "In 2 hours" as Measure
+
+Source -> [Code] : "Change the GUI"
+
+[Code] -> [Measure] : "GUI changed"
+
+}
+
+@enduml
+```
+
 
 # Ex - Quality Attribute Tradeoff
 
@@ -168,6 +493,18 @@ Exceed: >2 trade-offs
 
 Developing an app natively for each OS is expensive and time consuming, but it benefits from a good performance. Choosing a cross-platform environment on the other hand simplify the development process, making it faster and cheaper, but it might suffer in performance.
 
+## Complexity vs. Composability
+Software can be very complex due to huge amount of connections between the components. More complex the software is, the less easy is to assemble all the components. In other words, it is difficult to have high complexity and composability.
+
+## Complexity vs. Clarity
+The complex software can loose the clarity of the software. The software with high complexity, will bring less clarity. In other words, it may be very difficult to understand the complex software.
+
+## Time to Market vs. Usability
+Management wishes to launch a software product ASAP. Due to lack of time, the software is not as designed as needed. This may cause a negative effect of usability of the product. Development department is in hurry to deliver a product and so the usability factor is omitted. In other words, it may be impossible to deliver product on the market ASAP with very high usability.
+
+## Interoperability vs. Performance
+Interoperability is great quality attribute of a software. Our software product can exchange information with various different computer systems. On the other hand, the performance of our software product decreases due to this  high degree of exchange.
+
 # Ex - Feature Modeling
 
 {.instructions
@@ -187,7 +524,6 @@ Good: Include at least 6 non-trivial features, which are all implemented by your
 Exceed: Include more than 8 non-trivial features, indicate which are found in your project and which belong to one competitor
 
 }
-
 
 # Ex - Context Diagram
 
@@ -209,9 +545,6 @@ Exceed: >1 User and >1 Dependency, with both incoming and outgoing dependencies
 
 }
 
-
-
-
 # Ex - Component Model: Top-Down
 
 {.instructions
@@ -220,9 +553,9 @@ Within the context of your project domain, represent a model of your modular sof
 
 The number of components in your logical view should be between 6 and 9:
 
-- At least one component should be further decomposed into sub components
-- At least one component should already exist. You should plan how to reuse it, by locating it in some software repository and including in your model the exact link to its specification and its price.
-- At least one component should be stateful.
+* At least one component should be further decomposed into sub components
+* At least one component should already exist. You should plan how to reuse it, by locating it in some software repository and including in your model the exact link to its specification and its price.
+* At least one component should be stateful.
 
 The logical view should represent provide/require dependencies that are consistent with the interactions represented in the process view.
 
@@ -320,13 +653,9 @@ Exceed: >6 components (>1 decomposed) and >2 use case/process view
 
 ## Logical View
 
-
-
 ## Process Views
 
-Use Case: 
-
-
+Use Case:
 
 # Ex - Component Model: Bottom-Up
 
@@ -348,7 +677,6 @@ Exceed: Redesign based on >3 reused components (1 Logical View, >1 Process View,
 
 }
 
-
 # Ex - Interface/API Specification
 
 {.instructions
@@ -361,7 +689,7 @@ In this iteration, we will detail your previous model to specify the provided in
 
 Get started with one of these PlantUML templates, or you can come up with your own notation to describe the interfaces, as long as it includes all the necessary details.
 
-The first template describes separately the provided/required interfaces of each component. 
+The first template describes separately the provided/required interfaces of each component.
 
 ![Separate Required/Provided Interfaces](./examples/interface1.puml)
 
@@ -371,7 +699,7 @@ The second template annotates the logical view with the interface descriptions: 
 
 Pass: define interfaces of all outer-level components
 
-Good: Define interfaces of all outer-level components. Does your architecture publish a Web API? If not, extend it so that it does. 
+Good: Define interfaces of all outer-level components. Does your architecture publish a Web API? If not, extend it so that it does.
 
 Exceed: Also, document the Web API using the OpenAPI language. You can use the [OpenAPI-to-Tree](http://api-ace.inf.usi.ch/openapi-to-tree/) tool to visualize the structure of your OpenAPI description.
 
@@ -391,7 +719,7 @@ Pass: model existing connectors based on previous model decisions
 
 Good: model existing connectors based on previous model decisions, write an ADR about the choice of one connector
 
-Exceed: introduce a new type of connector and update your existing process view 
+Exceed: introduce a new type of connector and update your existing process view
 (sequence diagram) to show the connector primitives in action
 
 }
@@ -447,12 +775,12 @@ Your model should be non-trivial: include more than one physical device/virtual 
 
 b. Write an ADR about which deployment strategy you plan to adopt. The alternatives to be considered are: big bang, blue/green, shadow, pilot, gradual phase-in, canary, A/B testing.
 
-c. (Optional) Prepare a demo of a basic continuous integration and delivery pipeline for your architectural documentation so that you can obtain a single, integrated PDF with all the viewpoints you have modeled so far. 
+c. (Optional) Prepare a demo of a basic continuous integration and delivery pipeline for your architectural documentation so that you can obtain a single, integrated PDF with all the viewpoints you have modeled so far.
 
 For example:
 
-- configure a GitHub webhook to be called whenever you push changes to your documentation
-- setup a GitHub action (or similar) to build and publish your documentation on a website
+* configure a GitHub webhook to be called whenever you push changes to your documentation
+* setup a GitHub action (or similar) to build and publish your documentation on a website
 
 Pass: 1 physical view, 1 deployment view, 1 ADR (b.)
 
@@ -464,7 +792,7 @@ Exceed: 1 physical view, 1 deployment view, 1 ADR (b.) + 1 demo (c.)
 
 # Ex - Availability and Services
 
-{.instructions 
+{.instructions
 
 The goal of this week is to plan how to deliver your software as a service with high availability.
 
@@ -487,7 +815,7 @@ Exceed: 1, 2, 3, 4, 5, 6, 7, 8
 
 # Ex - Scalability
 
-{.instructions 
+{.instructions
 
 Now that your architecture delivers your software as a service, let's redesign it so that it can scale!
 
@@ -511,7 +839,7 @@ Exceed: 1, 2, 3, 4, 5 then redo 1, 2, 3 for different scalability dimensions
 
 # Ex - Flexibility
 
-{.instructions 
+{.instructions
 
 Only dead software stops changing. You just received a message from your customer, they have an idea. Is your architecture ready for it?
 
