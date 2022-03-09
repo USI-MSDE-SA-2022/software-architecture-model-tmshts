@@ -407,7 +407,7 @@ skinparam shadowing false
 rectangle "Runtime" {
 
 rectangle "User" as Source
-rectangle "Within 1 min" as Measure
+rectangle "Within 2 sec" as Measure
 
 Source -> [System] : "Tries to login"
 
