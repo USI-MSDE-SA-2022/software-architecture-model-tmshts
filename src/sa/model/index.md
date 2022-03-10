@@ -43,15 +43,15 @@ Hint: to choose a meaningful project look at the rest of the modeling tasks whic
 
 }
 
-Project Name: *Personal inventory system*
+**Project Name:** *Tradagg*
 
-Project Type: I will be working on this project as a working student at my home university in Germany.
+**Project Type:** I plan to build this web application in near future.
 
-Vision Statement: The personal inventory system is a web application for everyone who would like to keep an overview about his/her things. This inventory system records the things he/she borrows to friends, acquaintances or just strange people. Also some chairs at universities or institution would use this kind of small library system.
-Let me give an example to illustrate this idea. I own 10 things which I regularly borrow to my friends or acquaintances. Hence, I want to have an overview of how many things I already borrowed to my friends and how many I still have at home. If they exceed the deadline for giving me back the thing, they should receive an email or a message on WhatsApp automatically.
-Another use of this inventory system would be to write down all the things I have. So, I would keep track of how many years I have these things so that I can do preventive maintenance after certain time in effective way.
+**Vision Statement:** Tradagg is a web application for everyone who would like to have overview about his/her portfolio in stock market. Tradagg is an aggregator for different platforms for trading in stock market.
+An user can choose from many platforms such as Robinhood, Trading212, InteractiveBrokers and also from crypto platforms like Coinbase, Binance, etc.
+Hence, the user has a completely view about his portfolio in time. He can also get a notification once the value of his portfolio reaches a specific amount of money.
 
-Additional Information: Gratitude and credit to my supervisor Christian Fleiner.
+**Additional Information:** Gratitude and credit CS50.
 
 # Ex - Architectural Decision Records
 
@@ -81,7 +81,7 @@ Exceed: >2 ADR
 * What was the context for your decision?
     The web application will attract many users. Hence, we need to store the huge amount of data in a secure way.
     Relational database is perfect fit for web application.
-    Therefore, the goal is to store data in open source relational database for web applications.
+    Therefore, the goal is to store data in relational database.
 
 * What is the scope of your decision? Does it affect the entire architecture?
     It affects the the application and database server. User interface stays untouched.
@@ -100,7 +100,7 @@ Exceed: >2 ADR
     Relational Database
 
 * What is the main reason for that?
-    **Advantages:**
+  #### Advantages:
   * High security
   * Multi User
   * Avoid redundancy
@@ -108,14 +108,14 @@ Exceed: >2 ADR
   * Data integrity
   * Flexibility - CRUD
 
-    **Disadvantages:**
+  #### Disadvantages:
   * High physical memory/storage
   * Hight initial costs
 
 ### ADR 2
 
 * What did you decide?
-    I pick MySQL as relational database to store data.
+    I pick MySQL in Cloud as relational database to store data.
 
 * What was the context for your decision?
     The web application will attract many users. Hence, we need to store the huge amount of data in relational database.
@@ -129,21 +129,21 @@ Exceed: >2 ADR
 
 * Which alternative options did you consider?
     List at least 3 options
-  * MySQL
-  * PostgreSQL
-  * MariaDB
+  * MySQL in Cloud
+  * PostgreSQL in Cloud
+  * MySQL no cloud
 
 * Which one did you choose?
-    MySQL
+    MySQL in Cloud
 
 * What is the main reason for that?
-    **Advantages:**
+  #### Advantages:
   * Good match with Python - Easy use to connect with Python - driver "MySQL Connector"
   * Data security
   * Scalability
   * High performance
 
-    **Disdvantages:**
+  #### Disdvantages:
   * Impedance mismatch between object-oriented and the relational world.
   * Slower performance due to joins.
 
@@ -153,7 +153,7 @@ Exceed: >2 ADR
     I pick Django as Framework.
 
 * What was the context for your decision?
-    We have choosen MySQL as relational database for web application and python as programming language. MySQL can be easily connected to Python with Django web framework.
+    We have choosen MySQL in Cloud as relational database for web application and python as programming language. MySQL can be easily connected to Python with Django web framework.
 
 * What is the scope of your decision? Does it affect the entire architecture?
     It affects the application server. User interface stays untouched.
@@ -171,11 +171,11 @@ List at least 3 options
     Django
 
 * What is the main reason for that?
-    **Advantages:**
+  #### Advantages
   * Django works well with Python and MySQL
   * Better Scalability compared to the Flask
 
-    **Disdvantages:**
+  #### Disdvantages:
   * Monolithic architecture
 
 ### ADR 4
@@ -202,13 +202,13 @@ List at least 3 options
     Python
 
 * What is the main reason for that?
-    **Advantages:**
+  #### Advantages:
   * Experience with Python, Flask and MySQL - good combination
   * Flexible - intregration with other programming languages
   * Rich standard library
   * Huge Python community
 
-    **Disdvantages:**
+  #### Disdvantages:
   * Speed limitations
 
 # Ex - Quality Attribute Scenario
@@ -287,15 +287,8 @@ Source -> [System] : "Boot"
 
 Quality: *Feasibility - Time to market*
 
-Scenario: How many months does it tak to launch the minimal viable product to the market?
+Scenario: Our company makes a certain investment into software development so that the software is ready up to 5 months and can be used by users.
 
-{.feedback
-
-The above is not a scenario, it's a question about how to measure the quality attribute which is answered by your refined scenario below.
-
-The idea was to first specify the scenario (= answering your question) in natural language and then refine it in the diagram 
-
-}
 
 ```puml
 @startuml
@@ -322,7 +315,8 @@ Source -> [Software] : "Investing into software development"
 
 Quality: *Testability*
 
-Scenario: How many minutes does it take in average to perform unit test?
+Scenario: Unit tester performs certain unit test on specific component of the system. Based on the unit test, unit tester will obtain result values within 3 minutes.
+
 
 ```puml
 @startuml
@@ -338,7 +332,7 @@ rectangle "3 min" as Measure
 
 Source -> [Component of System] : "performs unit test"
 
-[Component of System] -> [Measure] : "provide access to state values"
+[Component of System] -> [Measure] : "provide result values"
 
 }
 
@@ -349,7 +343,7 @@ Source -> [Component of System] : "performs unit test"
 
 Quality: *Usability - Learnability*
 
-Scenario: How many minutes does it take in average for end user to learn the system features?
+Scenario: An end user wants to learn the system features of the web application. System was designed according to the various rules of human computer interaction so that the user will learn these system features within 10 minutes.
 
 ```puml
 @startuml
@@ -361,7 +355,7 @@ skinparam shadowing false
 rectangle "Runtime" {
 
 rectangle "End User" as Source
-rectangle "Within 5 min" as Measure
+rectangle "Within 10 min" as Measure
 
 Source -> [System] : "wants to learn system features"
 
@@ -376,7 +370,7 @@ Source -> [System] : "wants to learn system features"
 
 Quality: *Usability - Memorability*
 
-Scenario: How many minutes does it take in average for end user to use the web app after certain time?
+Scenario: An end user logs in his/her account after 3 months. Even after 3 months the user will manage to use the web application productively within 2 minutes.
 
 ```puml
 @startuml
@@ -390,7 +384,7 @@ rectangle "Runtime" {
 rectangle "User" as Source
 rectangle "Within 2 min" as Measure
 
-Source -> [System] : "Login after 3 months"
+Source -> [System] : "Log-in after 3 months"
 
 [System] -> [Measure] : "User uses web app productively"
 
@@ -403,7 +397,7 @@ Source -> [System] : "Login after 3 months"
 
 Quality: *Security - Authentication*
 
-Scenario: How many minutes does it take in average to authenticate the user?
+Scenario: An user tries to log into his account on the web application. The system authenticates the identity of the user so that the user logs in his account successufully within 2 seconds.
 
 ```puml
 @startuml
@@ -417,7 +411,7 @@ rectangle "Runtime" {
 rectangle "User" as Source
 rectangle "Within 2 sec" as Measure
 
-Source -> [System] : "Tries to login"
+Source -> [System] : "Tries to log in"
 
 [System] -> [Measure] : "logged successfully"
 
@@ -428,9 +422,9 @@ Source -> [System] : "Tries to login"
 
 ## 6 scenario
 
-Quality: *Performance*
+Quality: *Performance - Throughput*
 
-Scenario: How many minutes in average does it take to proceed the requests from users?
+Scenario: An user sends a request on the web application. The request is processed by the system with latency up to 100 ms.
 
 ```puml
 @startuml
@@ -441,12 +435,12 @@ skinparam shadowing false
 
 rectangle "Normal operation mode" {
 
-rectangle "Users" as Source
-rectangle "Latency up to 2 sec" as Measure
+rectangle "User" as Source
+rectangle "Latency up to 100 ms" as Measure
 
-Source -> [System] : "Events arrive"
+Source -> [System] : "Send request"
 
-[System] -> [Measure] : "Processes events"
+[System] -> [Measure] : "Request is processed"
 
 }
 
@@ -457,7 +451,7 @@ Source -> [System] : "Events arrive"
 
 Quality: *Modifiability*
 
-Scenario: How many minutes in average does it take to change graphical user interface?
+Scenario: Developer wants to change the GUI. Therefore, he needs to change the source code. As a result, the GUI is changed within 2 hours.
 
 ```puml
 @startuml
@@ -469,7 +463,7 @@ skinparam shadowing false
 rectangle "Design Time" {
 
 rectangle "Developer" as Source
-rectangle "In 2 hours" as Measure
+rectangle "Within 2 hours" as Measure
 
 Source -> [Code] : "Change the GUI"
 
