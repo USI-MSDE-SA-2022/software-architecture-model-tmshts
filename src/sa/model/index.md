@@ -285,9 +285,17 @@ Source -> [System] : "Boot"
 
 ## 1 scenario
 
-Quality: *Feasability - Time to market*
+Quality: *Feasibility - Time to market*
 
 Scenario: How many months does it tak to launch the minimal viable product to the market?
+
+{.feedback
+
+The above is not a scenario, it's a question about how to measure the quality attribute which is answered by your refined scenario below.
+
+The idea was to first specify the scenario (= answering your question) in natural language and then refine it in the diagram 
+
+}
 
 ```puml
 @startuml
