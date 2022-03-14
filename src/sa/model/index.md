@@ -527,6 +527,9 @@ Exceed: Include more than 8 non-trivial features, indicate which are found in yo
 
 }
 
+![Feature Model Diagram for trading aggregator](./examples/feature.fml)
+
+
 # Ex - Context Diagram
 
 {.instructions
@@ -546,6 +549,30 @@ Good: >1 User and >1 Dependency
 Exceed: >1 User and >1 Dependency, with both incoming and outgoing dependencies
 
 }
+
+```puml
+@startuml
+!include <C4/C4_Container>
+
+Person(user, "Users")
+
+System_Boundary(boundary, "Trading Aggregator") {
+
+}
+
+System_Ext(trading_platform, "Trading platforms")
+
+System_Ext(database, "MySQL in Cloud")
+
+
+Rel(user, boundary, "Requests/Responds")
+Rel(boundary, user, "Requests/Responds")
+Rel(boundary, trading_platform, "Request", "Stock, Price")
+Rel(trading_platform, boundary, "Respond", "Stock, Price")
+Rel(boundary, database, "Store", "Stock, Price")
+Rel(database, boundary, "Respond", "Stock, Price")
+@enduml
+```
 
 # Ex - Component Model: Top-Down
 

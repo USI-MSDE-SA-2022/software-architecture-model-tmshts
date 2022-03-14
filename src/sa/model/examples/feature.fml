@@ -9,25 +9,64 @@
 /// ( ) any combination of the features is possible
 /// [ ] a set of features (usually combined with the [*] [ ] annotation)
 
-Product: [
-    [*] Required Feature : {  
-        Alternative Sub Feature1,
-        Alternative Sub Feature1
+Trading aggregator : [
+    [ ] Price alert : (
+        1 Stock,
+        1 Cryptocurrency,
+        Selected stocks,
+        Selected cryptocurrencies,
+        Portfolio
+    ),
+    [*] Internet : {
+        3G,
+        4G,
+        5G
     },
-    [ ] Optional Feature : [
-        [*] Required Sub Feature,
-        [ ] Optional Sub Feature
-    ],
-    Combined Feature : (
-        Sub Feature1,
-        Sub Feature2
+    [*] Currency : {
+        Euro,
+        USD
+    },
+    [*] Visualization : {  
+        Static,
+        Dynamic
+    },
+    [*] Graph : {
+        Line Graph,
+        Pie Chart
+    },
+    [*] Trading platform : (
+        Cryptocurrency : (
+            Coinbase,
+            Binance,
+            Kraken,
+            etc.
+        ),
+        Stock : (
+            InteractiveBrokers,
+            Fidelity,
+            Robinhood,
+            Trading212,
+            etc.
+        )
     )
 ]
 
 /// Then the feature relationships
 
 /// Implication
-Sub Feature1 => Optional Sub Feature
+Static => Pie Chart
+Dynamic => Line Graph
+1 Stock => Stock
+Selected stocks => Stock
+1 Cryptocurrency => Cryptocurrency
+Selected cryptocurrencies => Cryptocurrency
+Portfolio => Trading platform
 
 /// Exclusive
-Alternative Sub Feature1 <--> Sub Feature2
+Dynamic <--> Pie Chart
+Static <--> Line Graph
+/// 1 Stock <--> Cryptocurrency
+/// Selected stocks <--> Cryptocurrency
+/// 1 Cryptocurrency <--> Stock
+/// Selected cryptocurrencies <--> Stock
+
