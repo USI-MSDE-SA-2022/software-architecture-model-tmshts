@@ -22,10 +22,18 @@ Trading aggregator : [
         4G,
         5G
     },
+    [*] Web application : {
+        Mobile phone,
+        Desktop
+    },
     [*] Currency : {
         Euro,
         USD
     },
+    [ ] Notification : (
+        Email,
+        WhatsApp
+    ),
     [*] Visualization : {  
         Static,
         Dynamic
@@ -61,6 +69,8 @@ Selected stocks => Stock
 1 Cryptocurrency => Cryptocurrency
 Selected cryptocurrencies => Cryptocurrency
 Portfolio => Trading platform
+Price alert => Notification
+Notification => Price alert
 
 /// Exclusive
 Dynamic <--> Pie Chart
