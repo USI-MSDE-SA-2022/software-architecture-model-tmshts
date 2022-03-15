@@ -561,16 +561,21 @@ System_Boundary(boundary, "Trading Aggregator") {
 }
 
 System_Ext(trading_platform, "Trading platforms")
-
+System_Ext(graph, "Graph Visualization")
 System_Ext(database, "MySQL in Cloud")
 
 
 Rel(user, boundary, "Requests/Responds")
 Rel(boundary, user, "Requests/Responds")
+
 Rel(boundary, trading_platform, "Request", "Stock, Price")
 Rel(trading_platform, boundary, "Respond", "Stock, Price")
-Rel(boundary, database, "Store", "Stock, Price")
-Rel(database, boundary, "Respond", "Stock, Price")
+
+Rel(boundary, graph, "Request", "Data")
+Rel(graph, boundary, "Respond", "Data")
+
+Rel(boundary, database, "CRUD", "Data")
+Rel(database, boundary, "Respond", "Data")
 @enduml
 ```
 
