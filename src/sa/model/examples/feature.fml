@@ -70,7 +70,6 @@ Selected stocks => Stock
 Selected cryptocurrencies => Cryptocurrency
 Portfolio => Trading platform
 Price alert => Notification
-Notification => Price alert
 
 /// Exclusive
 Dynamic <--> Pie Chart
