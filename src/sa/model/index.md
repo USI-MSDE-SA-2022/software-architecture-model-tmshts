@@ -528,7 +528,7 @@ Exceed: Include more than 8 non-trivial features, indicate which are found in yo
 }
 
 ![Feature Model Diagram for trading aggregator](./examples/feature.fml)
-
+ 
 
 # Ex - Context Diagram
 
@@ -686,6 +686,28 @@ Exceed: >6 components (>1 decomposed) and >2 use case/process view
 }
 
 ## Logical View
+
+```puml
+@startuml
+title Example Process View
+
+participant "User Interface" as UI
+participant "Music Player" as MP
+participant "Songs Repository" as SR
+participant "Customer Database" as CDB
+participant "Payment Service" as PS
+
+UI -> SR: Browse Songs
+UI -> CDB: Buy Song
+CDB -> PS: Charge Customer
+UI -> MP: Play Song
+MP -> SR: Get Music
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Courier
+@enduml
+```
 
 ## Process Views
 
