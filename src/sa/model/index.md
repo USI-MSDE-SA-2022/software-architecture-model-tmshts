@@ -689,7 +689,7 @@ Exceed: >6 components (>1 decomposed) and >2 use case/process view
 
 ```puml
 @startuml
-title Example Process View
+title My example Process View
 
 participant "User Interface" as UI
 participant "Music Player" as MP
