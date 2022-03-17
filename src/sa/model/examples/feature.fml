@@ -17,31 +17,22 @@ Trading aggregator : [
         Selected cryptocurrencies,
         Portfolio
     ),
-    [*] Internet : {
-        3G,
-        4G,
-        5G
-    },
-    [*] Web application : {
-        Mobile phone,
-        Desktop
-    },
-    [*] Currency : {
+    [*] Currency : (
         Euro,
         USD
-    },
+    ),
     [ ] Notification : (
         Email,
         WhatsApp
     ),
-    [*] Visualization : {  
+    [*] Visualization : (  
         Static,
         Dynamic
-    },
-    [*] Graph : {
+    ),
+    [*] Graph : (
         Line Graph,
         Pie Chart
-    },
+    ),
     [*] Trading platform : (
         Cryptocurrency : (
             Coinbase,
