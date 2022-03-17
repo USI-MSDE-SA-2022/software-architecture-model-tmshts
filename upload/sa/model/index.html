@@ -200,7 +200,7 @@ flex-direction: column}
         </svg>
         <div class="title">
             <h2></h2>
-            <h1>Software Architecture Model of The tailored Quiz by Tomas Hatas</h1>
+            <h1>Software Architecture Model</h1>
         </div>
         <ul>
             <li>Prof. Cesare Pautasso</li>
@@ -215,26 +215,13 @@ flex-direction: column}
 <p>We begin by selecting a suitable project domain.</p>
 <h1 id="ex---domain-selection"><span class='task'>1.</span>  Domain Selection</h1>
 <section class="instructions"><p>Submit the name and brief description (about 100 words) of your domain using the following vision statement template:</p>
-<pre><code>
-<b>Project name</b>
-The tailored Quiz
-
-<b>Project type</b>
-I have been working on this project as a working student since January 2022 at my home university in Germany.
-    
-<b>Vision statement</b>
-For universities who provide additional learning possibility for their students.
-   
-The quiz is an educational application that enables to the students to create an own quiz.
-This quiz can be then shared among other classmates.
-But not just this, the application also gives an opportunity to practise the students skills gained in the classes
-by answering the quiz created by someone else (professor or classmates).
-
-Main benefit is that the application can be downloaded on the SmartPhones
-and so the students are able to create their own quizes or answer the questions on the way.
-    
-<b>Additional Information</b>
-Gratitude and credit to my supervisor Christian Fleiner.
+<pre><code>For [target customers]
+Who [need/opportunity/problem]
+The [name your project]
+Is  [type of project]
+That [major features, core benefits, compelling reason to buy]
+Unlike [current reality or competitors]
+Our Project [summarize main advantages over status quo, unique selling point]
 </code></pre>
 <p>Please indicate if your choice is:</p>
 <ul>
@@ -245,259 +232,213 @@ Gratitude and credit to my supervisor Christian Fleiner.
 </ul>
 <p>The chosen domain should be unique for each student.</p>
 <p>Please be ready to give a 2 minute presentation about it (you can use a slide but it&#39;s not necessary)</p>
-<section class="hint"><span>Hint: </span>to choose a meaningful project look at the rest of the modeling tasks which you are going to perform in the context of your domain.</section></section>
-<p>Project Name: <em>The tailored Quiz</em></p>
-<p>Project Type: I have been working on this project as a working student since January 2022 at my home university in Germany.</p>
-<p>Vision Statement: For universities who provide additional learning possibility for their students.
-   
-The quiz is an educational application that enables to the students to create an own quiz.
-This quiz can be then shared among other classmates.
-But not just this, the application also gives an opportunity to practise the students skills gained in the classes
-by answering the quiz created by someone else (professor or classmates).
-    
-Main benefit is that the application can be downloaded on the SmartPhones
-and so the students are able to create their own quizes or answer the questions on the way.</p>
-<p>Additional Information: Gratitude and credit to my supervisor Christian Fleiner.</p>
-
-<p>Project Name: <em>Personal inventory system</em></p>
-<p>Project Type: I will be working on this project as a working student at my home university in Germany.</p>
-<p>Vision Statement: The personal inventory system is a web application for everyone who would like to keep an overview about his/her things. This inventory system records the things he/she borrows to friends, acquaintances or just strange people. Also some chairs at universities or institution would use this kind of small library system.
-
-Let me give an example to illustrate this idea. I own 10 things which I regularly borrow to my friends or acquaintances. Hence, I want to have an overview of how many things I already borrowed to my friends and how many I still have at home. If they exceed the deadline for giving me back the thing, they should receive an email or a message on WhatsApp automatically.</p>
-
-<p>Additional Information: Gratitude and credit to my supervisor Christian Fleiner.</p>
-
-<p>An user provides his/her inventory of the things into the user interface.
-How can be these data stored? How can an user figure out what things were borrowed and what things he/she still has at homer/in a office?
-For this, the application server is necessary which applies the business logic to process the above-mentioned questions.
-But something is still missing, which is database server - persistency. Data which were written into the user interface can be stored in the database server thanks to the application server. Moreover, thanks to this application server the data can be extracted from the database in order to figure out what things an user already borrowed and what things he/she still has.
-</p>
-
-
+<section class="hint"><span>Hint: </span>to choose a meaningful project look at the rest of the modeling tasks which you are going to perform in the context of your domain.</section></section><p><strong>Project Name:</strong> <em>Tradagg</em></p>
+<p><strong>Project Type:</strong> I plan to build this web application in near future.</p>
+<p><strong>Vision Statement:</strong> Tradagg is a web application for everyone who would like to have overview about his/her portfolio in stock market. Tradagg is an aggregator for different platforms for trading in stock market.
+An user can choose from many platforms such as Robinhood, Trading212, InteractiveBrokers and also from crypto platforms like Coinbase, Binance, etc.
+Hence, the user has a completely view about his portfolio in time. He can also get a notification once the value of his portfolio reaches a specific amount of money.</p>
+<p><strong>Additional Information:</strong> Gratitude and credit CS50.</p>
 <h1 id="ex---architectural-decision-records"><span class='task'>2.</span>  Architectural Decision Records</h1>
 <section class="instructions"><p>Software architecture is about making design decisions that will impact the quality of the software you plan to build.</p>
 <p>Let&#39;s practice how to describe an architectural decision. We will keep using ADRs to document architectural decisions in the rest of the model.</p>
 <p>Use the following template to capture one or more architectural design decisions in the context of your project domain</p>
-<section class="pass"><span>&starf;&star;&star;: </span>1 ADR</section><section class="ok"><span>&starf;&starf;&star;: </span>2 ADR</section><section class="exceed"><span>&starf;&starf;&starf;: </span>&gt;2 ADR</section></section><p>
-    
-1) Choose Programming language -> pick Java -> choose the build system, e. g. Gradle, Maven
--> choose the language version
--> pick Python + Java
-Java has many resources and huge community
-2) API:RESTful
-3) commercialization: software as a service
-4) separate front-end from back-end
-5) Using SPRING framework to develop web back-end
-6) windows or linux?
-7) app will be built as mobile application
-8) what is OS? 
-
-
-1) C++, Python, Java
-2) REST API, custom protocol
-3) one-time purchase of software package, software as a service
-5) with Django, with ASP.NET core, Spring framework,...
-7) desktop app, web app, mobile app
-8) Android, iOS, cross-platform development
-    
-<h3>Architectural Decision Record Template</h3>
-<h2 id="adr-1-template">ADR 1</h2>
-<ol><li>What did you decide?</li></ol>
-<ul>In order to store data (persistency tier) I need a relational database.</ul>
-
-<ol start="2"><li>What was the context for your decision?</li></ol>
-<ul>The web application will attract many users. Hence, we need to store the huge amount of data in a secure way.
-Relational database is perfect fit for web application.
-Therefore, the goal is to store data in open source relational database for web applications.
-</ul>
-
-<ul><p>What is the scope of your decision? Does it affect the entire architecture?</p></ul>
-<ul>It affects the the application and database server. User interface stays untouched.</ul>
-
-
-<ol start="3"><li>What is the problem you are trying to solve?</li></ol>
-<ul>Where can I store the data?</ul>
-
-<ol start="4"><li>Which alternative options did you consider?</li></ol>
-<ul><p>List at least 3 options:</p></ul>
+<section class="pass"><span>&starf;&star;&star;: </span>1 ADR</section><section class="ok"><span>&starf;&starf;&star;: </span>2 ADR</section><section class="exceed"><span>&starf;&starf;&starf;: </span>&gt;2 ADR</section></section><p><h3>Architectural Decision Record Template</h3><h2 id="adr-0-template">ADR #0 (Template)</h2>
+<ol>
+<li>What did you decide?</li>
+</ol>
+<p>Give a short title of solved problem and solution</p>
+<ol start="2">
+<li>What was the context for your decision?</li>
+</ol>
+<p>What is the goal you are trying to achieve?</p>
+<p>What are the constraints?</p>
+<p>What is the scope of your decision? Does it affect the entire architecture?</p>
+<ol start="3">
+<li>What is the problem you are trying to solve?</li>
+</ol>
+<p>You may want to articulate the problem in form of a question.</p>
+<ol start="4">
+<li>Which alternative options did you consider?</li>
+</ol>
+<p>List at least 3 options</p>
+<ol start="5">
+<li>Which one did you choose?</li>
+</ol>
+<p>Pick one of the options as the outcome of your decision</p>
+<ol start="6">
+<li>What is the main reason for that?</li>
+</ol>
+<p>List the positive consequences (pros) of your decision:</p>
 <ul>
-    <li>Relational database</li>
-    <li>NoSQL database - to store unstructured/semi-structured data - MongoDB</li>
-    <li>Cloud database - Microsoft Azure SQL Database</li>
+<li>quality improvement</li>
+<li>satisfaction of external constraint</li>
 </ul>
-
-<ol start="5"><li>Which one did you choose?</li></ol>
-<ul><p>Relational Database</p></ul>
-
-
-<ol start="6"><li>What is the main reason for that?</li></ol>
-<ul><b>Advantages:</b></ul>
+<p>If any, list the negative consequences (cons)</p>
 <ul>
-    <li>High security</li>
-    <li>Multi User</li>
-    <li>Avoid redundancy</li>
-    <li>Easy access to data/Easy query</li>
-    <li>Data integrity</li>
-    <li>Flexibility - CRUD</li>
+<li>quality degradation</li>
 </ul>
-<ul><b>Disadvantages:</b></ul>
+</p>
+<h3 id="adr-1">ADR 1</h3>
 <ul>
-    <li>High physical memory/storage</li>
-    <li>Hight initial costs</li>
-</ul>
-
-
-<h2 id="adr-2-template">ADR 2</h2>
-<ol><li>What did you decide?</li></ol>
-<ul>I pick MySQL as relational database to store data.</ul>
-
-
-<ol start="2"><li>What was the context for your decision?</li></ol>
-<ul>The web application will attract many users. Hence, we need to store the huge amount of data in relational database.
-It is necessary to choose the relational database which has a good match to Python. Therefore, my goal is to store data in a efficient way with respect to the programming language.
-</ul>
-
-<!--
-<ul><p>What are the constraints?</p></ul>
-<ul></ul>
---> 
-
-<ul><p>What is the scope of your decision? Does it affect the entire architecture?</p></ul>
-<ul>It affects the application and database server. User interface stays untouched.</ul>
-
-
-<ol start="3"><li>What is the problem you are trying to solve?</li></ol>
-<ul>What kind of relational database am I going to choose?</ul>
-
-
-<ol start="4"><li>Which alternative options did you consider?</li></ol>
-<ul><p>List at least 3 options</p></ul>
+<li><p>What did you decide?
+  In order to store data (persistency tier) I need a relational database.</p>
+</li>
+<li><p>What was the context for your decision?
+  The web application will attract many users. Hence, we need to store the huge amount of data in a secure way.
+  Relational database is perfect fit for web application.
+  Therefore, the goal is to store data in relational database.</p>
+</li>
+<li><p>What is the scope of your decision? Does it affect the entire architecture?
+  It affects the the application and database server. User interface stays untouched.</p>
+</li>
+<li><p>What is the problem you are trying to solve?
+  Where can I store the data?</p>
+</li>
+<li><p>Which alternative options did you consider?
+  List at least 3 options:</p>
 <ul>
-    <li>MySQL</li>
-    <li>PostgreSQL</li>
-    <li>MariaDB</li>
+<li>Relational database</li>
+<li>NoSQL database (to store unstructured/semi-structured data, e. g. MongoDB)</li>
+<li>RDF Triple Stores</li>
 </ul>
-
-
-<ol start="5"><li>Which one did you choose?</li></ol>
-<ul><p>MySQL</p></ul>
-
-
-<ol start="6"><li>What is the main reason for that?</li></ol>
-<ul><b>Advantages:</b></ul>
+</li>
+<li><p>Which one did you choose?
+  Relational Database</p>
+</li>
+<li><p>What is the main reason for that?</p>
+<h4 id="advantages">Advantages:</h4>
 <ul>
-    <li>Good match with Python - Easy use to connect with Python - driver "MySQL Connector"</li>
-    <li>Data security</li>
-    <li>Scalability</li>
-    <li>High performance</li>
+<li>High security</li>
+<li>Multi User</li>
+<li>Avoid redundancy</li>
+<li>Easy access to data/Easy query</li>
+<li>Data integrity</li>
+<li>Flexibility - CRUD</li>
 </ul>
-
-<ul><b>Disdvantages:</b></ul>
+<h4 id="disadvantages">Disadvantages:</h4>
 <ul>
-    <li>Impedance mismatch between object-oriented and the relational world.</li>
-    <li>Slower performance due to joins.</li>
+<li>High physical memory/storage</li>
+<li>Hight initial costs</li>
 </ul>
-
-
-
-<h2 id="adr-3-template">ADR 3</h2>
-<ol><li>What did you decide?</li></ol>
-<ul>I pick Python as programming language.</ul>
-
-
-<ol start="2"><li>What was the context for your decision?</li></ol>
-<ul>We have choosen MySQL as relational database for web application. Consequently, we have to choose the programming language. MySQL can be easily connected to Python with Django framework.
+</li>
 </ul>
-
-<!--
-<ul><p>What are the constraints?</p></ul>
-<ul></ul>
---> 
-
-<ul><p>What is the scope of your decision? Does it affect the entire architecture?</p></ul>
-<ul>It affects the application server. User interface stays untouched.</ul>
-
-
-<ol start="3"><li>What is the problem you are trying to solve?</li></ol>
-<ul>What programming language fits to our needs and experience?</ul>
-
-
-<ol start="4"><li>Which alternative options did you consider?</li></ol>
-<ul><p>List at least 3 options</p></ul>
+<h3 id="adr-2">ADR 2</h3>
 <ul>
-    <li>Python</li>
-    <li>Java</li>
-    <li>C++</li>
-</ul>
-
-
-<ol start="5"><li>Which one did you choose?</li></ol>
-<ul><p>Python</p></ul>
-
-
-<ol start="6"><li>What is the main reason for that?</li></ol>
-<ul><b>Advantages:</b></ul>
+<li><p>What did you decide?
+  I pick MySQL in Cloud as relational database to store data.</p>
+</li>
+<li><p>What was the context for your decision?
+  The web application will attract many users. Hence, we need to store the huge amount of data in relational database.
+  It is necessary to choose the relational database which has a good match to Python. Therefore, my goal is to store data in a efficient way with respect to the programming language.</p>
+</li>
+<li><p>What is the scope of your decision? Does it affect the entire architecture?
+  It affects the application and database server. User interface stays untouched.</p>
+</li>
+<li><p>What is the problem you are trying to solve?
+  What kind of relational database am I going to choose?</p>
+</li>
+<li><p>Which alternative options did you consider?
+  List at least 3 options</p>
 <ul>
-    <li>Experience with Python, Flask and MySQL - good combination</li>
-    <li>Flexible - intregration with other programming languages</li>
-    <li>Rich standard library</li>
-    <li>Huge Python community</li>
+<li>MySQL in Cloud</li>
+<li>PostgreSQL in Cloud</li>
+<li>MySQL no cloud</li>
 </ul>
-
-<ul><b>Disdvantages:</b></ul>
+</li>
+<li><p>Which one did you choose?
+  MySQL in Cloud</p>
+</li>
+<li><p>What is the main reason for that?</p>
+<h4 id="advantages-1">Advantages:</h4>
 <ul>
-    <li>Speed limitations</li>
+<li>Good match with Python - Easy use to connect with Python - driver &quot;MySQL Connector&quot;</li>
+<li>Data security</li>
+<li>Scalability</li>
+<li>High performance</li>
 </ul>
-
-
-<h2 id="adr-4-template">ADR 4</h2>
-<ol><li>What did you decide?</li></ol>
-<ul>I pick Django as Framework.</ul>
-
-
-<ol start="2"><li>What was the context for your decision?</li></ol>
-<ul>We have choosen MySQL as relational database for web application and python as programming language. MySQL can be easily connected to Python with Django web framework.
-</ul>
-
-<!--
-<ul><p>What are the constraints?</p></ul>
-<ul></ul>
---> 
-
-<ul><p>What is the scope of your decision? Does it affect the entire architecture?</p></ul>
-<ul>It affects the application server. User interface stays untouched.</ul>
-
-
-<ol start="3"><li>What is the problem you are trying to solve?</li></ol>
-<ul>What framework does match to Python and MySQL?</ul>
-
-
-<ol start="4"><li>Which alternative options did you consider?</li></ol>
-<ul><p>List at least 3 options</p></ul>
+<h4 id="disdvantages">Disdvantages:</h4>
 <ul>
-    <li>Django</li>
-    <li>Pyramid</li>
-    <li>Flask - microframework</li>
+<li>Impedance mismatch between object-oriented and the relational world.</li>
+<li>Slower performance due to joins.</li>
 </ul>
-
-
-<ol start="5"><li>Which one did you choose?</li></ol>
-<ul><p>Django</p></ul>
-
-
-<ol start="6"><li>What is the main reason for that?</li></ol>
-<ul><b>Advantages:</b></ul>
+</li>
+</ul>
+<h3 id="adr-3">ADR 3</h3>
 <ul>
-    <li>Django works well with Python and MySQL</li>
-    <li>Better Scalability compared to the Flask</li>
-</ul>
-
-<ul><b>Disdvantages:</b></ul>
+<li><p>What did you decide?
+  I pick Django as Framework.</p>
+</li>
+<li><p>What was the context for your decision?
+  We have choosen MySQL in Cloud as relational database for web application and python as programming language. MySQL can be easily connected to Python with Django web framework.</p>
+</li>
+<li><p>What is the scope of your decision? Does it affect the entire architecture?
+  It affects the application server. User interface stays untouched.</p>
+</li>
+<li><p>What is the problem you are trying to solve?
+  What framework does match to Python and MySQL?</p>
+</li>
+<li><p>Which alternative options did you consider?
+List at least 3 options</p>
 <ul>
-    <li>Monolithic architecture</li>
+<li>Django</li>
+<li>Pyramid</li>
+<li>Flask - microframework</li>
 </ul>
-
-
+</li>
+<li><p>Which one did you choose?
+  Django</p>
+</li>
+<li><p>What is the main reason for that?</p>
+<h4 id="advantages-2">Advantages</h4>
+<ul>
+<li>Django works well with Python and MySQL</li>
+<li>Better Scalability compared to the Flask</li>
+</ul>
+<h4 id="disdvantages-1">Disdvantages:</h4>
+<ul>
+<li>Monolithic architecture</li>
+</ul>
+</li>
+</ul>
+<h3 id="adr-4">ADR 4</h3>
+<ul>
+<li><p>What did you decide?
+  I pick Python as programming language.</p>
+</li>
+<li><p>What was the context for your decision?
+  We have choosen MySQL as relational database for web application. Consequently, we have to choose the programming language. MySQL can be easily connected to Python with Django framework.</p>
+</li>
+<li><p>What is the scope of your decision? Does it affect the entire architecture?
+  It affects the application server. User interface stays untouched.</p>
+</li>
+<li><p>What is the problem you are trying to solve?
+  What programming language fits to our needs and experience?</p>
+</li>
+<li><p>Which alternative options did you consider?
+  List at least 3 options:</p>
+<ul>
+<li>Python</li>
+<li>Java</li>
+<li>C++</li>
+</ul>
+</li>
+<li><p>Which one did you choose?
+  Python</p>
+</li>
+<li><p>What is the main reason for that?</p>
+<h4 id="advantages-3">Advantages:</h4>
+<ul>
+<li>Experience with Python, Flask and MySQL - good combination</li>
+<li>Flexible - intregration with other programming languages</li>
+<li>Rich standard library</li>
+<li>Huge Python community</li>
+</ul>
+<h4 id="disdvantages-2">Disdvantages:</h4>
+<ul>
+<li>Speed limitations</li>
+</ul>
+</li>
+</ul>
 <h1 id="ex---quality-attribute-scenario"><span class='task'>3.</span>  Quality Attribute Scenario</h1>
 <section class="instructions"><ol>
 <li><p>Pick a scenario for a specific quality attribute. Describe it with natural language.</p>
@@ -513,22 +454,52 @@ It is necessary to choose the relational database which has a good match to Pyth
 <section class="pass"><span>&starf;&star;&star;: </span>3 scenarios</section><section class="ok"><span>&starf;&starf;&star;: </span>&gt;3 scenarios</section><section class="exceed"><span>&starf;&starf;&starf;: </span>&gt;6 scenarios using challenging qualities</section></section><h2 id="example-scenario">Example Scenario</h2>
 <p>Quality: <em>Recoverability</em></p>
 <p>Scenario: In case of power failure, rebooting the system should take up to 20 seconds.</p>
-<img src="./puml_e1.svg"><h1 id="ex---quality-attribute-tradeoff"><span class='task'>4.</span>  Quality Attribute Tradeoff</h1>
+<img src="./puml_e1.svg"><h2 id="1-scenario">1 scenario</h2>
+<p>Quality: <em>Feasibility - Time to market</em></p>
+<p>Scenario: Our company makes a certain investment into software development so that the software is ready up to 5 months and can be used by users.</p>
+<img src="./puml_e2.svg"><h2 id="2-scenario">2 scenario</h2>
+<p>Quality: <em>Testability</em></p>
+<p>Scenario: Unit tester performs certain unit test on specific component of the system. Based on the unit test, unit tester will obtain result values within 3 minutes.</p>
+<img src="./puml_e3.svg"><h2 id="3-scenario">3 scenario</h2>
+<p>Quality: <em>Usability - Learnability</em></p>
+<p>Scenario: An end user wants to learn the system features of the web application. System was designed according to the various rules of human computer interaction so that the user will learn these system features within 10 minutes.</p>
+<img src="./puml_e4.svg"><h2 id="4-scenario">4 scenario</h2>
+<p>Quality: <em>Usability - Memorability</em></p>
+<p>Scenario: An end user logs in his/her account after 3 months. Even after 3 months the user will manage to use the web application productively within 2 minutes.</p>
+<img src="./puml_e5.svg"><h2 id="5-scenario">5 scenario</h2>
+<p>Quality: <em>Security - Authentication</em></p>
+<p>Scenario: An user tries to log into his account on the web application. The system authenticates the identity of the user so that the user logs in his account successufully within 2 seconds.</p>
+<img src="./puml_e6.svg"><h2 id="6-scenario">6 scenario</h2>
+<p>Quality: <em>Performance - Throughput</em></p>
+<p>Scenario: An user sends a request on the web application. The request is processed by the system with latency up to 100 ms.</p>
+<img src="./puml_e7.svg"><h2 id="7-scenario">7 scenario</h2>
+<p>Quality: <em>Modifiability</em></p>
+<p>Scenario: Developer wants to change the GUI. Therefore, he needs to change the source code. As a result, the GUI is changed within 2 hours.</p>
+<img src="./puml_e8.svg"><h1 id="ex---quality-attribute-tradeoff"><span class='task'>4.</span>  Quality Attribute Tradeoff</h1>
 <section class="instructions"><p>Pick a free combination of two qualities on the <a href="https://usi365.sharepoint.com/:x:/s/MSDE-2022-SoftwareArchitecture/ESVksoXVgMNHtKBKrIwatMYBqorOFaKjxnoqssEy0gNPCg?e=81W7SI">map</a> and write your name to claim it.</p>
 <p>Then write a short text giving an example for the tradeoff in this assignment.</p>
 <section class="pass"><span>&starf;&star;&star;: </span>1 unique trade-off</section><section class="ok"><span>&starf;&starf;&star;: </span>2 trade-offs</section><section class="exceed"><span>&starf;&starf;&starf;: </span>&gt;2 trade-offs</section></section><h2 id="portability-vs-performance-example">Portability vs. Performance (Example)</h2>
 <p>Developing an app natively for each OS is expensive and time consuming, but it benefits from a good performance. Choosing a cross-platform environment on the other hand simplify the development process, making it faster and cheaper, but it might suffer in performance.</p>
+<h2 id="complexity-vs-composability">Complexity vs. Composability</h2>
+<p>Software can be very complex due to huge amount of connections between the components. More complex the software is, the less easy is to assemble all the components. In other words, it is difficult to have high complexity and composability.</p>
+<h2 id="complexity-vs-clarity">Complexity vs. Clarity</h2>
+<p>The complex software can loose the clarity of the software. The software with high complexity, will bring less clarity. In other words, it may be very difficult to understand the complex software.</p>
+<h2 id="time-to-market-vs-usability">Time to Market vs. Usability</h2>
+<p>Management wishes to launch a software product ASAP. Due to lack of time, the software is not as designed as needed. This may cause a negative effect of usability of the product. Development department is in hurry to deliver a product and so the usability factor is omitted. In other words, it may be impossible to deliver product on the market ASAP with very high usability.</p>
+<h2 id="interoperability-vs-performance">Interoperability vs. Performance</h2>
+<p>Interoperability is great quality attribute of a software. Our software product can exchange information with various different computer systems. On the other hand, the performance of our software product decreases due to this  high degree of exchange.</p>
 <h1 id="ex---feature-modeling"><span class='task'>5.</span>  Feature Modeling</h1>
 <section class="instructions"><p>In the context of your chosen project domain, describe your domain using a feature model.</p>
 <p>The feature model should be correctly visualized using the following template:</p>
 <p><img src="./puml_0.svg" alt="Example Feature Model Diagram"></p>
 <p>If possible, make use of all modeling constructs.</p>
-<section class="pass"><span>&starf;&star;&star;: </span>Include at least 4 non-trivial features</section><section class="ok"><span>&starf;&starf;&star;: </span>Include at least 6 non-trivial features, which are all implemented by your project</section><section class="exceed"><span>&starf;&starf;&starf;: </span>Include more than 8 non-trivial features, indicate which are found in your project and which belong to one competitor</section></section><h1 id="ex---context-diagram"><span class='task'>6.</span>  Context Diagram</h1>
+<section class="pass"><span>&starf;&star;&star;: </span>Include at least 4 non-trivial features</section><section class="ok"><span>&starf;&starf;&star;: </span>Include at least 6 non-trivial features, which are all implemented by your project</section><section class="exceed"><span>&starf;&starf;&starf;: </span>Include more than 8 non-trivial features, indicate which are found in your project and which belong to one competitor</section></section><p><img src="./fml_0.svg" alt="Feature Model Diagram for trading aggregator"></p>
+<h1 id="ex---context-diagram"><span class='task'>6.</span>  Context Diagram</h1>
 <section class="instructions"><p>Prepare a context diagram to define the design boundary for your project.</p>
 <p>Here is a PlantUML/C4 example to get started.</p>
 <p><img src="./puml_1.svg" alt="Example Context Diagram"></p>
 <p>Make sure to include all possible user personas and external dependencies you may need.</p>
-<section class="pass"><span>&starf;&star;&star;: </span>1 User and 1 Dependency</section><section class="ok"><span>&starf;&starf;&star;: </span>&gt;1 User and &gt;1 Dependency</section><section class="exceed"><span>&starf;&starf;&starf;: </span>&gt;1 User and &gt;1 Dependency, with both incoming and outgoing dependencies</section></section><h1 id="ex---component-model-top-down"><span class='task'>7.</span>  Component Model: Top-Down</h1>
+<section class="pass"><span>&starf;&star;&star;: </span>1 User and 1 Dependency</section><section class="ok"><span>&starf;&starf;&star;: </span>&gt;1 User and &gt;1 Dependency</section><section class="exceed"><span>&starf;&starf;&starf;: </span>&gt;1 User and &gt;1 Dependency, with both incoming and outgoing dependencies</section></section><img src="./puml_e9.svg"><h1 id="ex---component-model-top-down"><span class='task'>7.</span>  Component Model: Top-Down</h1>
 <section class="instructions"><p>Within the context of your project domain, represent a model of your modular software architecture decomposed into components.</p>
 <p>The number of components in your logical view should be between 6 and 9:</p>
 <ul>
@@ -541,9 +512,9 @@ It is necessary to choose the relational database which has a good match to Pyth
 <p>You can add additional process views showing how other use cases can be satisfied by the same set of components.</p>
 <p>This assignment will focus on modularity-related decisions, we will worry about deployment and the container view later.</p>
 <p>Here is a PlantUML example logical view and process view.</p>
-<img src="./puml_e2.svg"><img src="./puml_e3.svg"><section class="hint"><span>Hint: </span>How to connect sub-components to other external components? Use this pattern.</section><img src="./puml_e4.svg"><section class="pass"><span>&starf;&star;&star;: </span>6 components (1 decomposed), 1 use case/process view</section><section class="ok"><span>&starf;&starf;&star;: </span>6 components (1 decomposed), 2 use case/process view</section><section class="exceed"><span>&starf;&starf;&starf;: </span>&gt;6 components (&gt;1 decomposed) and &gt;2 use case/process view</section></section><h2 id="logical-view">Logical View</h2>
+<img src="./puml_e10.svg"><img src="./puml_e11.svg"><section class="hint"><span>Hint: </span>How to connect sub-components to other external components? Use this pattern.</section><img src="./puml_e12.svg"><section class="pass"><span>&starf;&star;&star;: </span>6 components (1 decomposed), 1 use case/process view</section><section class="ok"><span>&starf;&starf;&star;: </span>6 components (1 decomposed), 2 use case/process view</section><section class="exceed"><span>&starf;&starf;&starf;: </span>&gt;6 components (&gt;1 decomposed) and &gt;2 use case/process view</section></section><h2 id="logical-view">Logical View</h2>
 <h2 id="process-views">Process Views</h2>
-<p>Use Case: </p>
+<p>Use Case:</p>
 <h1 id="ex---component-model-bottom-up"><span class='task'>8.</span>  Component Model: Bottom-Up</h1>
 <section class="instructions"><p>Within the context of your project domain, represent a model of your modular software architecture decomposed into components.</p>
 <p>To design this model you should attempt to buy and reuse as many components as possible.</p>
@@ -558,15 +529,15 @@ It is necessary to choose the relational database which has a good match to Pyth
 </li>
 </ol>
 <p>Get started with one of these PlantUML templates, or you can come up with your own notation to describe the interfaces, as long as it includes all the necessary details.</p>
-<p>The first template describes separately the provided/required interfaces of each component. </p>
+<p>The first template describes separately the provided/required interfaces of each component.</p>
 <p><img src="./puml_2.svg" alt="Separate Required/Provided Interfaces"></p>
 <p>The second template annotates the logical view with the interface descriptions: less redundant, but needs the logical dependencies to be modeled to show which are the required interfaces.</p>
 <p><img src="./puml_3.svg" alt="Shared Interfaces"></p>
-<section class="pass"><span>&starf;&star;&star;: </span>define interfaces of all outer-level components</section><section class="ok"><span>&starf;&starf;&star;: </span>Define interfaces of all outer-level components. Does your architecture publish a Web API? If not, extend it so that it does. </section><section class="exceed"><span>&starf;&starf;&starf;: </span>Also, document the Web API using the OpenAPI language. You can use the <a href="http://api-ace.inf.usi.ch/openapi-to-tree/">OpenAPI-to-Tree</a> tool to visualize the structure of your OpenAPI description.</section></section><h1 id="ex---connector-view"><span class='task'>10.</span>  Connector View</h1>
+<section class="pass"><span>&starf;&star;&star;: </span>define interfaces of all outer-level components</section><section class="ok"><span>&starf;&starf;&star;: </span>Define interfaces of all outer-level components. Does your architecture publish a Web API? If not, extend it so that it does.</section><section class="exceed"><span>&starf;&starf;&starf;: </span>Also, document the Web API using the OpenAPI language. You can use the <a href="http://api-ace.inf.usi.ch/openapi-to-tree/">OpenAPI-to-Tree</a> tool to visualize the structure of your OpenAPI description.</section></section><h1 id="ex---connector-view"><span class='task'>10.</span>  Connector View</h1>
 <section class="instructions"><p>Extend your existing models introducing the connector view</p>
 <p>For every pair of connected components (logical view), pick the most suitable connector. Existing components can play the role of connector, or new connectors may need to be introduced.</p>
 <p>Make sure that the interactions shown in the process views reflect the primitives of the selected connector</p>
-<section class="pass"><span>&starf;&star;&star;: </span>model existing connectors based on previous model decisions</section><section class="ok"><span>&starf;&starf;&star;: </span>model existing connectors based on previous model decisions, write an ADR about the choice of one connector</section><section class="exceed"><span>&starf;&starf;&starf;: </span>introduce a new type of connector and update your existing process view 
+<section class="pass"><span>&starf;&star;&star;: </span>model existing connectors based on previous model decisions</section><section class="ok"><span>&starf;&starf;&star;: </span>model existing connectors based on previous model decisions, write an ADR about the choice of one connector</section><section class="exceed"><span>&starf;&starf;&starf;: </span>introduce a new type of connector and update your existing process view
 (sequence diagram) to show the connector primitives in action</section></section><h1 id="ex---adapters-and-coupling"><span class='task'>11.</span>  Adapters and Coupling</h1>
 <section class="instructions"><ol>
 <li>Highlight the connectors (or components) in your existing bottom-up design playing the role of adapter. (We suggest to use the bottom-up design since when dealing with externally sourced components, their interfaces can be a source of mismatches).</li>
@@ -601,14 +572,14 @@ Whenever you have a connector you couple together the components and different c
 </ol>
 <p>Your model should be non-trivial: include more than one physical device/virtual container (or both). Be ready to discuss which connectors are found at the device/container boundaries.</p>
 <p>b. Write an ADR about which deployment strategy you plan to adopt. The alternatives to be considered are: big bang, blue/green, shadow, pilot, gradual phase-in, canary, A/B testing.</p>
-<p>c. (Optional) Prepare a demo of a basic continuous integration and delivery pipeline for your architectural documentation so that you can obtain a single, integrated PDF with all the viewpoints you have modeled so far. </p>
+<p>c. (Optional) Prepare a demo of a basic continuous integration and delivery pipeline for your architectural documentation so that you can obtain a single, integrated PDF with all the viewpoints you have modeled so far.</p>
 <p>For example:</p>
 <ul>
 <li>configure a GitHub webhook to be called whenever you push changes to your documentation</li>
 <li>setup a GitHub action (or similar) to build and publish your documentation on a website</li>
 </ul>
 <section class="pass"><span>&starf;&star;&star;: </span>1 physical view, 1 deployment view, 1 ADR (b.)</section><section class="ok"><span>&starf;&starf;&star;: </span>&gt;1 physical view, &gt;1 deployment view, 1 ADR (b.)</section><section class="exceed"><span>&starf;&starf;&starf;: </span>1 physical view, 1 deployment view, 1 ADR (b.) + 1 demo (c.)</section></section><h1 id="ex---availability-and-services"><span class='task'>13.</span>  Availability and Services</h1>
-<section class="instructions "><p>The goal of this week is to plan how to deliver your software as a service with high availability.</p>
+<section class="instructions"><p>The goal of this week is to plan how to deliver your software as a service with high availability.</p>
 <ol>
 <li>If necessary, change your deployment design so that your software is hosted on a server (which could be running as a Cloud VM). Your SaaS architecture should show how your SaaS can be remotely accessed from a client such as a Web browser, or a mobile app</li>
 <li>Sketch your software as a service pricing model (optional)</li>
@@ -620,7 +591,7 @@ Whenever you have a connector you couple together the components and different c
 <li>How did you mitigate the impact of your external dependencies being not available? (if applicable)</li>
 </ol>
 <section class="pass"><span>&starf;&star;&star;: </span>1, 3, 4, one of:  5, 6, 7, 8</section><section class="ok"><span>&starf;&starf;&star;: </span>1, 2, 3, 4, two of:  5, 6, 7, 8</section><section class="exceed"><span>&starf;&starf;&starf;: </span>1, 2, 3, 4, 5, 6, 7, 8</section></section><h1 id="ex---scalability"><span class='task'>14.</span>  Scalability</h1>
-<section class="instructions "><p>Now that your architecture delivers your software as a service, let&#39;s redesign it so that it can scale!</p>
+<section class="instructions"><p>Now that your architecture delivers your software as a service, let&#39;s redesign it so that it can scale!</p>
 <ol>
 <li><p>Pick one scalability dimension: number of clients, size of input, size of state, number of dependencies</p>
 </li>
@@ -634,7 +605,7 @@ Whenever you have a connector you couple together the components and different c
 </li>
 </ol>
 <section class="pass"><span>&starf;&star;&star;: </span>1, 2, 3, 5</section><section class="ok"><span>&starf;&starf;&star;: </span>1, 2, 3, 4, 5</section><section class="exceed"><span>&starf;&starf;&starf;: </span>1, 2, 3, 4, 5 then redo 1, 2, 3 for different scalability dimensions</section></section><h1 id="ex---flexibility"><span class='task'>15.</span>  Flexibility</h1>
-<section class="instructions "><p>Only dead software stops changing. You just received a message from your customer, they have an idea. Is your architecture ready for it?</p>
+<section class="instructions"><p>Only dead software stops changing. You just received a message from your customer, they have an idea. Is your architecture ready for it?</p>
 <ol>
 <li><p>Pick a new use case scenario. Precisely, what exactly do you need to change of your existing architecture so that it can be supported? Model the updated logical/process/deployment views.</p>
 </li>
