@@ -43,7 +43,7 @@ Hint: to choose a meaningful project look at the rest of the modeling tasks whic
 
 }
 
-**Project Name:** *Tradagg*
+**Project Name:** *TradAgg*
 
 **Project Type:** I plan to build this web application in near future.
 
@@ -689,19 +689,45 @@ Exceed: >6 components (>1 decomposed) and >2 use case/process view
 
 ```puml
 @startuml
-title My example Process View
+skinparam componentStyle rectangle
 
-participant "User Interface" as UI
-participant "Music Player" as MP
-participant "Songs Repository" as SR
-participant "Customer Database" as CDB
-participant "Payment Service" as PS
+!include <tupadr3/font-awesome/database>
 
-UI -> SR: Browse Songs
-UI -> CDB: Buy Song
-CDB -> PS: Charge Customer
-UI -> MP: Play Song
-MP -> SR: Get Music
+title "TradAgg" Logical View
+interface " " as TAI
+interface " " as GVI
+interface " " as TPI
+interface " " as DBI
+interface " " as CCI
+interface " " as GMAILI
+interface " " as TPDBI
+interface " " as GVDBI
+interface " " as GVTPI
+[Database <$database{scale=0.33}>] as DB 
+[Trading Aggregator] as TA
+[User Interface] as UI
+[Graph visualization] as GV
+[Trading platforms] as TP
+[Currency converter] as CC
+[Gmail] as GMAIL
+GMAILI -- GMAIL
+TA --( GMAILI
+CCI - CC
+DB -( CCI
+TA - TAI
+GV - GVI
+GVI )- TA
+GV --( GVDBI
+DB -- GVDBI
+TPI -- TP
+TAI )- UI
+DBI -- DB
+TA --( DBI
+TA --( TPI
+TP - TPDBI
+TPDBI )- DB
+GVTPI -- TP
+GV --( GVTPI
 
 skinparam monochrome true
 skinparam shadowing false
@@ -711,7 +737,99 @@ skinparam defaultFontName Courier
 
 ## Process Views
 
-Use Case:
+Use Case: **Add Stock into portfolio**
+
+```puml
+@startuml
+title "Add Stock into portfolio" Process View
+
+participant "User Interface" as UI
+participant "Trading Aggregator" as TA
+participant "Trading platforms" as TP
+participant "Database" as DB
+
+UI -> TA: Select Stock
+TA -> TP: Get Stock
+
+alt request positive accepted
+TP -> TA: ok
+TP -> DB: Store it
+TA -> UI: Stock added
+
+else error message
+TP -> TA: request failed
+TA -> UI: Inform about error message
+
+end
+
+@enduml
+```
+
+
+Use Case: **Visualize portfolio in pie chart**
+
+```puml
+@startuml
+title "Visualize portfolio in pie chart" Process View
+
+participant "User Interface" as UI
+participant "Trading Aggregator" as TA
+participant "Graph visualization" as GV
+participant "Database" as DB
+
+UI -> TA: Select portfolio
+TA -> GV: Get portfolio
+GV -> DB: Choose stocks
+DB -> GV: Provided prices
+GV -> TA: Provide graph
+TA -> UI: Visualize portfolio
+
+@enduml
+```
+
+
+Use Case: **Update prices**
+
+```puml
+@startuml
+title "Update prices" Process View
+
+participant "Trading Aggregator" as TA
+participant "Trading platforms" as TP
+participant "Database" as DB
+
+-> TA: every 5 minutes
+TA -> TP: Request actual prices
+TP -> DB: Actual prices updated
+
+@enduml
+```
+
+
+Use Case: **Visualize portfolio in EUR**
+
+```puml
+@startuml
+title "Visualize portfolio in EUR" Process View
+
+participant "User Interface" as UI
+participant "Trading Aggregator" as TA
+participant "Graph visualization" as GV
+participant "Database" as DB
+participant "Currency converter" as CC
+
+
+UI -> TA: Select EUR
+TA -> GV: Get EUR
+GV -> DB: Choose stocks
+DB -> CC: Convert prices in EUR
+CC -> DB: Prices are converted
+DB -> GV: Portfolio in EUR
+GV -> TA: Visualize portfolio in EUR
+TA -> UI: Provide portfolio in EUR
+
+@enduml
+```
 
 # Ex - Component Model: Bottom-Up
 
