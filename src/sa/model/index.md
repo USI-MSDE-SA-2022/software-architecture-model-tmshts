@@ -689,7 +689,7 @@ Exceed: >6 components (>1 decomposed) and >2 use case/process view
 
 ```puml
 @startuml
-skinparam componentStyle rectangle
+skinparam componentStyle true
 
 !include <tupadr3/font-awesome/database>
 
@@ -700,13 +700,25 @@ interface " " as TPI
 interface " " as DBI
 interface " " as CCI
 interface " " as NI
-[Database <$database{scale=0.33}>] as DB 
-[Trading Aggregator] as TA
-[User Interface] as UI
-[Graph visualization] as GV
-[Trading platforms] as TP
-[Currency converter] as CC
-[Notification] as NOT
+
+component "Database <$database{scale=0.33}>" as DB 
+component "Trading Aggregator" as TA
+component "User Interface" as UI {
+    component "Search bar for stock" as AS
+    component "Portfolio selection" as VP
+    component "Change currency" as CHC
+    component "Price alert" as PC
+}
+component "Graph visualization" as GV
+component "Trading platforms" as TP
+component "Currency converter" as CC
+component "Notification" as NOT {
+    component "Gmail" as GM
+    component "WhatsApp" as WA
+}
+
+
+
 NI -- NOT
 TA --( NI
 CCI -- CC
@@ -739,7 +751,7 @@ participant "Trading Aggregator" as TA
 participant "Trading platforms" as TP
 participant "Database" as DB
 
-UI -> TA: Select Stock
+UI -> TA: Search Stock
 TA -> TP: Get Stock
 
 alt request positive accepted
