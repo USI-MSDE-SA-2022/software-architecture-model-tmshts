@@ -699,35 +699,26 @@ interface " " as GVI
 interface " " as TPI
 interface " " as DBI
 interface " " as CCI
-interface " " as GMAILI
-interface " " as TPDBI
-interface " " as GVDBI
-interface " " as GVTPI
+interface " " as NI
 [Database <$database{scale=0.33}>] as DB 
 [Trading Aggregator] as TA
 [User Interface] as UI
 [Graph visualization] as GV
 [Trading platforms] as TP
 [Currency converter] as CC
-[Gmail] as GMAIL
-GMAILI -- GMAIL
-TA --( GMAILI
-CCI - CC
-DB -( CCI
+[Notification] as NOT
+NI -- NOT
+TA --( NI
+CCI -- CC
+TA --( CCI
 TA - TAI
 GV - GVI
 GVI )- TA
-GV --( GVDBI
-DB -- GVDBI
 TPI -- TP
 TAI )- UI
 DBI -- DB
 TA --( DBI
 TA --( TPI
-TP - TPDBI
-TPDBI )- DB
-GVTPI -- TP
-GV --( GVTPI
 
 skinparam monochrome true
 skinparam shadowing false
@@ -753,7 +744,7 @@ TA -> TP: Get Stock
 
 alt request positive accepted
 TP -> TA: ok
-TP -> DB: Store it
+TA -> DB: Store it
 TA -> UI: Stock added
 
 else error message
@@ -779,8 +770,10 @@ participant "Database" as DB
 
 UI -> TA: Select portfolio
 TA -> GV: Get portfolio
-GV -> DB: Choose stocks
-DB -> GV: Provided prices
+GV -> TA: What stocks, prices and date
+TA -> DB: Choose stocks with prices and date
+DB -> TA: Provided information
+TA -> GV: Get portfolio
 GV -> TA: Provide graph
 TA -> UI: Visualize portfolio
 
@@ -800,7 +793,8 @@ participant "Database" as DB
 
 -> TA: every 5 minutes
 TA -> TP: Request actual prices
-TP -> DB: Actual prices updated
+TP -> TA: Prices updated
+TA -> DB: Actual prices stored
 
 @enduml
 ```
@@ -810,7 +804,7 @@ Use Case: **Visualize portfolio in EUR**
 
 ```puml
 @startuml
-title "Visualize portfolio in EUR" Process View
+title "Convert portfolio from USD to EUR" Process View
 
 participant "User Interface" as UI
 participant "Trading Aggregator" as TA
@@ -821,12 +815,12 @@ participant "Currency converter" as CC
 
 UI -> TA: Select EUR
 TA -> GV: Get EUR
-GV -> DB: Choose stocks
-DB -> CC: Convert prices in EUR
-CC -> DB: Prices are converted
-DB -> GV: Portfolio in EUR
-GV -> TA: Visualize portfolio in EUR
-TA -> UI: Provide portfolio in EUR
+GV -> TA: What are prices and dates
+TA -> DB: Choose prices with dates
+DB -> TA: Provided prices with dates
+TA -> CC: Convert prices to EUR based on dates
+CC -> TA: Prices are converted
+TA -> UI: Visualize portfolio in EUR
 
 @enduml
 ```
