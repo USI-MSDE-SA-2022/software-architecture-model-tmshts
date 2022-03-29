@@ -972,7 +972,11 @@ component "User Interface" as UI
 component "BackEnd" as BE {
     component "Trading Aggregator" as TA
     component "Graph visualization" as GV
-    component "Trading platforms" as TP
+    component "Trading platforms" as TP {
+        component "Coinbase API" as CAPI
+        component "Binance API" as BAPI
+        component "Interactive Brokers API" as IBAPI
+    }
     component "Exchange rate" as ER
     component "Gmail" as GM
     component "Database <$database{scale=0.33}>" as DB 
