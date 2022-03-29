@@ -711,7 +711,7 @@ component "User Interface" as UI {
 }
 component "Graph visualization" as GV
 component "Trading platforms" as TP
-component "Currency converter" as CC
+component "Exchange rate" as ER
 component "Notification" as NOT {
     component "Gmail" as GM
     component "WhatsApp" as WA
@@ -721,7 +721,7 @@ component "Notification" as NOT {
 
 NI -- NOT
 TA --( NI
-CCI -- CC
+CCI -- ER
 TA --( CCI
 TA - TAI
 GV - GVI
@@ -856,6 +856,119 @@ Good: Existing design with at least 3 reused components (1 Logical View, 1 Proce
 Exceed: Redesign based on >3 reused components (1 Logical View, >1 Process View, >1 ADR)
 
 }
+
+## Reused components:
+* 1) Plotly as Python Open Source Graph Library
+* 2) Exchangerate.host for exchange & crypto rates
+* 3) MySQL as free open source database
+* 4) Kivy as GUI component
+
+
+### 1) ADR for Graph visualization
+
+* What did you decide?
+    Plotly as Python Open Source Graph Library
+
+* What is the problem you are trying to solve?
+    How can be data visualized in GUI?
+
+* Which alternative options did you consider?
+    List at least 3 options:
+
+  * mpld3 - Python library
+  * Bokeh - Python library
+  * Plotly - Python library
+
+* Which one did you choose?
+    Plotly
+
+* What is the main reason for that?
+  #### Advantages:
+  * No fees
+  * Experience
+  * Extensive range for chart types (for future plans)
+
+
+### 2) ADR for Exchange rate
+
+* What did you decide?
+    Exchangerate.host for exchange & crypto rates
+
+* What is the problem you are trying to solve?
+    How can be converted the currency?
+
+* Which alternative options did you consider?
+    List at least 3 options:
+
+  * www.exchangerate.host
+  * www.exchangerate-api.com
+  * www.openexchangerates.org
+
+* Which one did you choose?
+    Exchangerate.host
+
+* What is the main reason for that?
+  #### Advantages:
+  * Free
+  * Python friendly
+
+
+### 3) ADR for Database
+
+* What did you decide?
+    MySQL as free open source database
+
+* What is the problem you are trying to solve?
+    Where can I store the data?
+
+* Which alternative options did you consider?
+    List at least 3 options
+  * MySQL in Cloud
+  * PostgreSQL in Cloud
+  * MySQL no cloud
+
+* Which one did you choose?
+    MySQL in Cloud
+
+  #### Advantages:
+  * Free open source
+  * Good match with Python - Easy use to connect with Python - driver "MySQL Connector"
+  * Data security
+  * Scalability
+  * High performance
+
+  #### Disdvantages:
+  * Impedance mismatch between object-oriented and the relational world.
+  * Slower performance due to joins.
+
+
+### 4) ADR for User Interface
+
+* What did you decide?
+    Kivy as GUI component
+
+* What is the problem you are trying to solve?
+    How can be seen the application?
+
+* Which alternative options did you consider?
+    List at least 3 options:
+
+  * PyQt5
+  * Tkinter
+  * Kivy
+
+* Which one did you choose?
+    Kivy
+
+* What is the main reason for that?
+  #### Advantages:
+  * Experience
+  * Free
+  * Cross-platform (for future plans)
+  * Python framework
+
+
+
 
 # Ex - Interface/API Specification
 
