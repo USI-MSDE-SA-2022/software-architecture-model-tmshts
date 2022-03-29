@@ -738,7 +738,7 @@ skinparam defaultFontName Courier
 @enduml
 ```
 
-## Process Views
+## Updated Process Views
 
 Use Case: **Add Stock into portfolio**
 
@@ -857,11 +857,25 @@ Exceed: Redesign based on >3 reused components (1 Logical View, >1 Process View,
 
 }
 
-## Reused components:
+## Reused components which are free to use:
 * 1) Plotly as Python Open Source Graph Library
+    * https://plotly.com/python
 * 2) Exchangerate.host for exchange & crypto rates
+    * https://exchangerate.host
 * 3) MySQL as free open source database
-* 4) Kivy as GUI component
+    * https://www.mysql.com/products/community
+* 4) Gmail API
+    * https://developers.google.com/gmail/api
+* 5) Trading platforms based on OAuth2, e. g.:
+    * Coinbase https://developers.coinbase.com/api/v2
+    * Binance https://developers.binance.com/docs/login/web-integration
+    * Interactive Brokers https://www.interactivebrokers.com/webtradingapi
+
+
+## Reused components which are charged and thas why I excluded this component:
+* 1) WhatsApp API
+    * https://www.whatsapp.com/business/api
+    * 90 USD / month
 
 
 ### 1) ADR for Graph visualization
@@ -942,32 +956,140 @@ Exceed: Redesign based on >3 reused components (1 Logical View, >1 Process View,
   * Slower performance due to joins.
 
 
-### 4) ADR for User Interface
+  ## Updated Logical View
 
-* What did you decide?
-    Kivy as GUI component
+```puml
+@startuml
+skinparam componentStyle true
 
-* What is the problem you are trying to solve?
-    How can be seen the application?
+!include <tupadr3/font-awesome/database>
 
-* Which alternative options did you consider?
-    List at least 3 options:
-
-  * PyQt5
-  * Tkinter
-  * Kivy
-
-* Which one did you choose?
-    Kivy
-
-* What is the main reason for that?
-  #### Advantages:
-  * Experience
-  * Free
-  * Cross-platform (for future plans)
-  * Python framework
+title "TradAgg" Logical View
+interface " " as TAI
 
 
+component "User Interface" as UI
+component "BackEnd" as BE {
+    component "Trading Aggregator" as TA
+    component "Graph visualization" as GV
+    component "Trading platforms" as TP
+    component "Exchange rate" as ER
+    component "Gmail" as GM
+    component "Database <$database{scale=0.33}>" as DB 
+    TA -(0- GV
+    TA -(0- DB
+    TA -(0- TP
+    TA -(0- ER
+    TA -(0- GM
+}
+
+
+UI --( TAI 
+TAI -- TA
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Courier
+@enduml
+```
+
+## Updated Process Views
+
+Use Case: **Add crypto from Coinbase into portfolio**
+
+```puml
+@startuml
+title "Add crypto from Coinbase into portfolio" Process View
+
+participant "User Interface" as UI
+participant "Trading Aggregator" as TA
+participant "Trading platforms" as TP
+participant "Database" as DB
+
+UI -> TA: Add crypto
+TA -> TP: GET https://api.coinbase.com/v2/accounts/:account_id
+
+alt request positive accepted
+TP -> TA: 200 OK
+TA -> TA: Adjust data
+TA -> DB: cursor.execute(adjusted_data)
+TA -> UI: Stock added
+
+else error message
+TP -> TA: request failed
+TA -> UI: Inform about error message
+
+end
+
+@enduml
+```
+
+
+Use Case: **Visualize portfolio in pie chart**
+
+```puml
+@startuml
+title "Visualize portfolio in pie chart" Process View
+
+participant "User Interface" as UI
+participant "Trading Aggregator" as TA
+participant "Database" as DB
+participant "Graph visualization" as GV
+
+
+UI -> TA: Select portfolio
+TA -> DB: cursor.execute(sql_query)
+DB -> TA: cursor.fetchall()
+TA -> GV: px.pie(data)
+GV -> TA: fig.show()
+TA -> UI: provide pie chart
+
+@enduml
+```
+
+Use Case: **Visualize portfolio in EUR**
+
+```puml
+@startuml
+title "Convert portfolio from USD to EUR" Process View
+
+participant "User Interface" as UI
+participant "Trading Aggregator" as TA
+participant "Database" as DB
+participant "Exchange rate" as ER
+participant "Graph visualization" as GV
+
+
+UI -> TA: Select EUR
+TA -> DB: cursor.execute(sql_query)
+DB -> TA: cursor.fetchall()
+TA -> ER: request.get(url)
+ER -> TA: response.json()
+TA -> TA: convert prices
+TA -> GV: px.pie(data)
+GV -> TA: fig.show()
+TA -> UI: provide pie chart
+
+@enduml
+```
+
+Use Case: **Update prices**
+
+```puml
+@startuml
+title "Update prices" Process View
+
+participant "Trading Aggregator" as TA
+participant "Trading platforms" as TP
+participant "Database" as DB
+
+-> TA: every 5 minutes
+TA -> TP: Request actual prices
+TP -> TA: Prices updated
+TA -> DB: Actual prices stored
+
+@enduml
+```
 
 
 # Ex - Interface/API Specification
