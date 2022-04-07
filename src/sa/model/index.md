@@ -859,13 +859,13 @@ Exceed: Redesign based on >3 reused components (1 Logical View, >1 Process View,
 
 ## Reused components which are free to use:
 * 1) Plotly as Python Open Source Graph Library
-    * https://plotly.com/python
+    * https://plotly.com/python-api-reference/
 * 2) Exchangerate.host for exchange & crypto rates
-    * https://exchangerate.host
+    * https://exchangerate.host/#/#docs
 * 3) MySQL as free open source database
-    * https://www.mysql.com/products/community
+    * https://dev.mysql.com/doc/connector-python/en/
 * 4) Gmail API
-    * https://developers.google.com/gmail/api
+    * https://developers.google.com/gmail/api/reference/rest
 * 5) Trading platforms based on OAuth2, e. g.:
     * Coinbase https://developers.coinbase.com/api/v2
     * Binance https://developers.binance.com/docs/login/web-integration
@@ -972,19 +972,44 @@ component "User Interface" as UI
 component "BackEnd" as BE {
     component "Trading Aggregator" as TA
     component "Graph visualization" as GV
+    component "Database <$database{scale=0.33}>" as DB 
+    component "Exchange rate" as ER
+    component "Gmail" as GM
     component "Trading platforms" as TP {
         component "Coinbase API" as CAPI
         component "Binance API" as BAPI
         component "Interactive Brokers API" as IBAPI
     }
-    component "Exchange rate" as ER
-    component "Gmail" as GM
-    component "Database <$database{scale=0.33}>" as DB 
     TA -(0- GV
     TA -(0- DB
     TA -(0- TP
     TA -(0- ER
     TA -(0- GM
+
+    Note bottom of DB
+        Method signatures
+        cursor.execute(adjusted_data)
+        cursor.fetchall()
+    end note
+
+    Note bottom of TP
+        Method signatures
+        GET https://api.coinbase.com/v2/accounts/:account_id
+        200 OK
+    end note
+
+    Note bottom of GV
+        Method signatures
+        px.pie(data)
+        fig.show()
+    end note
+
+    Note top of ER
+        Method signatures
+        request.get(url)
+        response.json()
+    end note
+
 }
 
 
@@ -1123,6 +1148,207 @@ Good: Define interfaces of all outer-level components. Does your architecture pu
 Exceed: Also, document the Web API using the OpenAPI language. You can use the [OpenAPI-to-Tree](http://api-ace.inf.usi.ch/openapi-to-tree/) tool to visualize the structure of your OpenAPI description.
 
 }
+
+
+```puml
+@startuml
+skinparam componentStyle true
+
+!include <tupadr3/font-awesome/database>
+
+title "TradAgg" Logical View
+interface " " as TAI
+
+component "User Interface" as UI
+component "API" as API
+interface " " as APII
+
+UI --( APII
+APII -- API
+note left of APII
+operation:
+..
+register()
+login()
+change_password()
+add_platform()
+delete_platform()
+visualize_portfolio_pie()
+visualize_portfolio_line(time)
+select_eur()
+select_usd()
+price_alert(price)
+notification()
+provide_email()
+for companies if they know the token for the user:
+get_portfolio()
+end note
+
+component "BackEnd" as BE {
+    component "Trading Aggregator" as TA
+    interface " " as TAI
+
+    component "Schedule" as SCH
+    interface " " as SCHI
+
+    component "Graph visualization" as GV
+    interface " " as GVI
+
+    component "Database <$database{scale=0.33}>" as DB
+    interface " " as DBI
+
+    component "Exchange rate" as ER
+    interface " " as ERI
+
+    component "Gmail" as GM
+    interface " " as GMI
+
+
+    
+    component "Trading platforms" as TP {
+        component "Coinbase API" as CAPI
+        interface " " as CAPII
+        CAPII - CAPI
+            note bottom of CAPII
+            operation:
+            ..
+            GET https://www.coinbase.com/oauth/authorize?response_type=code&client_id=YOUR_CLIENT_ID&redirect_uri=https://tradagg.com&state=SECURE_RANDOM&scope=wallet:accounts:read
+            GET https://example.com/oauth/callback?code=4c666b5c0c0d9d3140f2e0776cbe245f3143011d82b7a2c2a590cc7e20b79ae8&state=134ef5504a94
+            POST https://api.coinbase.com/oauth/token
+            GET https://api.coinbase.com/v2/accounts
+            end note
+        component "Binance API" as BAPI
+        interface " " as BAPII
+        BAPI - BAPII
+            note top of BAPII
+            operation:
+            ..
+            GET https://accounts.binance.com/en/oauth/authorize?response_type=code&client_id=YOUR_CLIENT_ID&redirect_uri=https://tradagg.com&state=CSRF_TOKEN&scope=SCOPES
+            GET https://domain.com/oauth/callback?code=cf6941ae8918b6a008f1377f36a4557ab5935b36&state=377f36a4557ab5935b36
+            POST https://accounts.binance.com/oauth/token?client_id=YOUR_CLIENT_ID&client_secret=YOUR_CLIENT_SECRET&grant_type=authorization_code&code=STEP3_CODE&redirect_uri=YOUR_REDIRECT_URI
+            GET https://accounts.binance.com/oauth-api/user-info?access_token=xxx
+            end note     
+        component "Interactive Brokers API" as IBAPI
+        interface " " as IBAPII
+        IBAPII - IBAPI
+            note bottom of IBAPII
+            operation:
+            ..
+            POST https://www.interactivebrokers.com/tradingapi/v1/oauth/request_token
+            POST https://www.interactivebrokers.com/tradingapi/v1/oauth/access_token
+            GET https://www.interactivebrokers.com/tradingapi/v1/accounts/{account}/positions
+            end note
+    }
+    interface " " as TPI
+    
+    TA --( GVI
+    GVI -- GV
+
+    note bottom of GVI
+    operations:
+    ..
+    plotly.express.line(data_frame)
+    plotly.express.pie(data_frame)
+    show()
+    end note
+
+    TA --( SCHI
+    SCHI -- SCH
+    note bottom of SCHI
+    operations:
+    ..
+    schedule.every().day.at("22:00").do(get_current_portfolio)
+    schedule.every().day.at("16:00").do(get_current_portfolio)
+    end note
+
+
+    TA --( DBI
+    DBI -- DB
+    note top of DBI
+    operations:
+    ..
+    mysql.connector.connect(user, password, host, database_name)
+    cursor()
+    cursor.execute()
+    commit()
+    close()
+    --
+    events:
+    ..
+    AFTER UPDATE TRIGGER
+    --
+    properties:
+    ..
+    user_id
+    end note
+    
+    TA -( TPI
+    TPI - TP
+
+    TA --( ERI
+    ERI -- ER
+    note top of ERI
+    operations:
+    ..
+    requests.get('https://api.exchangerate.host/latest')
+    response.json()
+    end note
+
+
+    TA --( GMI
+    GMI -- GM
+    note bottom of GMI
+    operation:
+    ..
+    Credentials.from_authorized_user_file()
+    build()
+    MIMEText()
+    base64.urlsafe_b64encode(message.as_string())
+    service.users().messages().send(userId=user_id, body=message).execute()
+    POST https://gmail.googleapis.com/gmail/v1/users/{userId}/messages/send
+    end note
+}
+
+
+API --( TAI 
+TAI -- TA
+
+note top of TAI
+operations:
+..
+register()
+login()
+change_password()
+authentication()
+autorization()
+add_crypto_platform(platform_name)
+add_stock_platform(platform_name)
+delete_crypto_platform(platform_name)
+delete_stock_platform(platform_name)
+get_portfolio_eur()
+get_portfolio_usd()
+provide_pie_chart()
+provide_line_chart(timeframe)
+select_currency_eur()
+select_currency_usd()
+set_price_alert(price)
+set_notification()
+store_email()
+end note
+
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Courier
+@enduml
+```
+
+Web API
+link: http://api-ace.inf.usi.ch/openapi-to-tree/
+
+![alt text](./api.JPG)
+
+
 
 # Ex - Connector View
 
