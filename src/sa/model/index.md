@@ -1278,10 +1278,6 @@ component "BackEnd" as BE {
     events:
     ..
     AFTER UPDATE TRIGGER
-    --
-    properties:
-    ..
-    user_id
     end note
     
     TA -( TPI
