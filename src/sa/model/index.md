@@ -1163,24 +1163,26 @@ component "User Interface" as UI
 component "API" as API
 interface " " as APII
 
+component "Third party" as TParty
+APII )- TParty
+
 UI --( APII
 APII -- API
 note left of APII
 operation:
 ..
-register()
-login()
-change_password()
-add_platform()
-delete_platform()
+register(username, password)
+login(username, password)
+change_password(password)
+add_platform(platform_name)
+delete_platform(platform_name)
 visualize_portfolio_pie()
 visualize_portfolio_line(time)
 select_eur()
 select_usd()
 price_alert(price)
 notification()
-provide_email()
-for companies if they know the token for the user:
+provide_email(email)
 get_portfolio()
 end note
 
@@ -1316,24 +1318,23 @@ TAI -- TA
 note top of TAI
 operations:
 ..
-register()
-login()
-change_password()
+register(username, password)
+login(username, password)
+change_password(password)
 authentication()
 autorization()
 add_crypto_platform(platform_name)
 add_stock_platform(platform_name)
 delete_crypto_platform(platform_name)
 delete_stock_platform(platform_name)
-get_portfolio_eur()
-get_portfolio_usd()
+get_portfolio()
 provide_pie_chart()
 provide_line_chart(timeframe)
 select_currency_eur()
 select_currency_usd()
 set_price_alert(price)
 set_notification()
-store_email()
+store_email(email)
 end note
 
 
