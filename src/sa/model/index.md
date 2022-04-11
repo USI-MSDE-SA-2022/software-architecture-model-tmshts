@@ -1160,11 +1160,8 @@ title "TradAgg" Logical View
 interface " " as TAI
 
 component "User Interface" as UI
-component "API" as API
+component "Web API" as API
 interface " " as APII
-
-component "Third party" as TParty
-APII )- TParty
 
 UI --( APII
 APII -- API
@@ -1345,6 +1342,8 @@ link: http://api-ace.inf.usi.ch/openapi-to-tree/
 
 ![alt text](./api.JPG)
 
+POST - insert, into collection
+PUT - modify
 
 
 # Ex - Connector View
