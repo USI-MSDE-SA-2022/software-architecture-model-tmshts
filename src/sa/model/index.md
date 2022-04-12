@@ -1165,23 +1165,6 @@ interface " " as APII
 
 UI --( APII
 APII -- API
-note left of APII
-operation:
-..
-register(username, password)
-login(username, password)
-change_password(password)
-add_platform(platform_name)
-delete_platform(platform_name)
-visualize_portfolio_pie()
-visualize_portfolio_line(time)
-select_eur()
-select_usd()
-price_alert(price)
-notification()
-provide_email(email)
-get_portfolio()
-end note
 
 component "BackEnd" as BE {
     component "Trading Aggregator" as TA
@@ -1258,6 +1241,10 @@ component "BackEnd" as BE {
     ..
     schedule.every().day.at("22:00").do(get_current_portfolio)
     schedule.every().day.at("16:00").do(get_current_portfolio)
+    --
+    events:
+    ..
+    Time Event
     end note
 
 
@@ -1342,9 +1329,6 @@ link: http://api-ace.inf.usi.ch/openapi-to-tree/
 
 ![alt text](./api.JPG)
 
-POST - insert, into collection
-PUT - modify
-
 
 # Ex - Connector View
 
@@ -1364,6 +1348,87 @@ Exceed: introduce a new type of connector and update your existing process view
 (sequence diagram) to show the connector primitives in action
 
 }
+
+```puml
+@startuml
+skinparam componentStyle true
+
+!include <tupadr3/font-awesome/database>
+
+title "TradAgg" Logical View
+interface " " as TAI
+
+component "User Interface" as UI
+component "Web API" as API
+interface " " as APII
+
+UI --( APII
+APII -- API
+
+component "BackEnd" as BE {
+    component "Trading Aggregator" as TA
+    interface " " as TAI
+
+    component "Schedule" as SCH
+    interface " " as SCHI
+
+    component "Graph visualization" as GV
+    interface " " as GVI
+
+    component "Database <$database{scale=0.33}>" as DB
+    interface " " as DBI
+
+    component "Exchange rate" as ER
+    interface " " as ERI
+
+    component "Gmail" as GM
+    interface " " as GMI
+    
+    component "Trading platforms" as TP {
+        component "Coinbase API" as CAPI
+        interface " " as CAPII
+        CAPII - CAPI
+
+        component "Binance API" as BAPI
+        interface " " as BAPII
+        BAPI - BAPII
+ 
+        component "Interactive Brokers API" as IBAPI
+        interface " " as IBAPII
+        IBAPII - IBAPI
+    }
+    interface " " as TPI
+    
+    TA --( GVI
+    GVI -- GV
+
+    TA --( SCHI
+    SCHI -- SCH
+
+    TA --( DBI
+    DBI -- DB
+    
+    TA -( TPI
+    TPI - TP
+
+    TA --( ERI
+    ERI -- ER
+
+    TA --( GMI
+    GMI -- GM
+}
+
+API --( TAI 
+TAI -- TA
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Courier
+@enduml
+```
+
+![Example Connector View Diagram](./examples/connector-view-assignment.c5)
+
 
 # Ex - Adapters and Coupling
 
