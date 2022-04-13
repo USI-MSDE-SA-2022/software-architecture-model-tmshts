@@ -1313,7 +1313,8 @@ provide_line_chart(timeframe)
 select_currency_eur()
 select_currency_usd()
 set_price_alert(price)
-set_notification()
+set_notification_for_price_alert()
+subscribe_for_news_from_markets()
 store_email(email)
 end note
 
@@ -1427,7 +1428,34 @@ skinparam defaultFontName Courier
 @enduml
 ```
 
-![Example Connector View Diagram](./examples/connector-view-assignment.c5)
+## Original connector view
+![Example Connector View Diagram](./examples/connector-view-original.c5)
+
+
+
+## Updated connector view - message bus
+![Example Connector View Diagram](./examples/connector-view-updated.c5)
+
+
+
+## Process view - User subscribes for news from markets
+```puml
+@startuml
+title "Subscribe for news from markets" Process View
+
+participant "User Interface" as UI
+participant "Trading Aggregator" as TA
+participant "Bus" as BUS
+participant "Trading platforms" as TP
+
+UI -> TA: subscribe_for_news_from_markets()
+TA -> BUS: subscribe
+TP -> BUS: publish
+BUS -> TA: notify
+TA -> UI: provide news
+
+@enduml
+```
 
 
 # Ex - Adapters and Coupling
