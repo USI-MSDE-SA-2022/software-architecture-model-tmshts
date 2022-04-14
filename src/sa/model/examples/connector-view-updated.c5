@@ -5,15 +5,15 @@
 
 User Interface -call-> Trading Agregator
 
+Trading Agregator -queue-> Schedule
+Schedule -queue-> Trading Agregator
+
 Trading Agregator -queue-> Graph visualization
 Trading Agregator <- Graph visualization
 
-Trading Agregator -> web API -> Gmail
+Trading Agregator -> web API -> Gmail Handler
 
-Trading Agregator <-> db Database
-
-Trading Agregator -queue-> Schedule
-Schedule -queue-> Trading Agregator
+Trading Agregator -call-> Database
 
 Trading Agregator <- web API <- Trading Platforms
 

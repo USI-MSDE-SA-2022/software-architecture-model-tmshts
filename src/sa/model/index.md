@@ -1382,7 +1382,7 @@ component "BackEnd" as BE {
     component "Exchange rate" as ER
     interface " " as ERI
 
-    component "Gmail" as GM
+    component "Gmail Handler" as GM
     interface " " as GMI
     
     component "Trading platforms" as TP {
