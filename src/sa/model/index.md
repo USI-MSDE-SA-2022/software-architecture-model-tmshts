@@ -1431,7 +1431,29 @@ skinparam defaultFontName Courier
 ## Original connector view
 ![Example Connector View Diagram](./examples/connector-view-original.c5)
 
+### ADR
 
+* What did you decide?
+    * Web connector between Trading Agregator and Trading Platforms
+
+* What is the problem you are trying to solve?
+    * Trading Agregator has to pull the stocks/cryptos and prices from Trading Platforms.
+
+* Which alternative options did you consider?
+    List at least 3 options
+    * Remote Procedure Call
+    * Message Bus
+    * Web
+
+* Which one did you choose?
+    * Web
+
+  #### Advantages:
+    * GET, but also PUT in case of Gmail
+    * Immediate response compared to Message Bus - different use
+
+  #### Disdvantages:
+    * Limited amount of pull actions within 1 day for some platforms
 
 ## Updated connector view - message bus
 ![Example Connector View Diagram](./examples/connector-view-updated.c5)
