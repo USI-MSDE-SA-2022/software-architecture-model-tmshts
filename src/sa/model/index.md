@@ -1746,8 +1746,9 @@ skinparam defaultFontName Courier
 * Timing
     * Both components have to be available at the same time to get portfolio of an user.
 
-* Discovery
-    * Trading Aggregator finds the Trading platforms component at running time using web API as HTTP request/response.
+* Discovery and binding
+    * User interface provides to the Trading Aggregator the Trading Platforms which should be added to his user's account.
+    Thus, the Trading Aggregator finds the Trading platforms component BEFORE running time. Hence, Binding is static.
 
 {.feedback
 
@@ -1761,13 +1762,13 @@ Same comment applies to the aggregator-fx rate binding.
 
 ### Trading Aggregator and Exchange Rate
 
-* Discovery
-    * Trading Aggregator finds the Exchange Rate component at running time thanks to the URL.
+* Discovery and binding
+    * Trading Aggregator finds the Exchange Rate component BEFORE running time thanks to the URL which is provided by business entity. By business entity is meant a person or a group of persons in our start-up that makes a decision what Exchange Rate Platform will be used. Hence, Binding is static.
 
 ### Trading Aggregator App and Trading Platforms
 
 * Platform
-    * If any trading platform does not support Python anymore, my app will crash.
+    * If any trading platform changes the programming language, my app will not be affected because I access data over HTTP/JSON - loose coupling.
 
 {.feedback
 
@@ -1790,8 +1791,8 @@ The code is a bit verbose, please highlight or add comments to point to the esse
     # Import psycopg2 Adapter
     import psycopg2
 
-    # Establish connection
-    connection = psycopg2.connect(database="postgres", user='postgres', password='646hkh?kjbk', host='127.0.0.1', port= '5432')
+#### #Establish connection thanks to the Adapter
+connection = psycopg2.connect(database="postgres", user='postgres', password='646hkh?kjbk', host='127.0.0.1', port= '5432')
 
     # Create cursor
     cursor = connection.cursor()
@@ -1846,7 +1847,8 @@ The code is a bit verbose, please highlight or add comments to point to the esse
         'scope': wallet:user:read wallet:accounts:read
         }
 
-    authorization_request = requests.get('https://www.coinbase.com/oauth/authorize/get', params=pload)
+#### #Access to Coinbase thanks to the web API Adapter
+authorization_request = requests.get('https://www.coinbase.com/oauth/authorize/get', params=pload)
 
     ## 2. Coinbase redirects back to your site with temporary code
 
@@ -1869,7 +1871,8 @@ The code is a bit verbose, please highlight or add comments to point to the esse
         'redirect_uri': my_uri
     }
 
-    access_token_data = requests.post('https://api.coinbase.com/oauth/token/post', data=dataload)
+#### #Get access token thanks to the web API Adapter
+access_token_data = requests.post('https://api.coinbase.com/oauth/token/post', data=dataload)
 
     # Valid Access Token as response
 
@@ -1904,8 +1907,8 @@ The code is a bit verbose, please highlight or add comments to point to the esse
         access_token_value
     }
 
-    user_data = requests.get('https://api.coinbase.com/v2/user/authorization', params=authorization_data)
-    
+#### #Get user data thanks to the web API Adapter
+user_data = requests.get('https://api.coinbase.com/v2/user/authorization', params=authorization_data)
 
     # Json file response
     '''
