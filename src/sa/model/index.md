@@ -1749,6 +1749,16 @@ skinparam defaultFontName Courier
 * Discovery
     * Trading Aggregator finds the Trading platforms component at running time using web API as HTTP request/response.
 
+{.feedback
+
+Very interesting. Is the trading aggregator googling for the best trading platforms and following the search engine's result links to the dynamically discovered Trading platforms? :-)
+
+Just a question to provoke a discussion on when the discovery of what takes place.
+
+Same comment applies to the aggregator-fx rate binding.
+
+}
+
 ### Trading Aggregator and Exchange Rate
 
 * Discovery
@@ -1759,8 +1769,20 @@ skinparam defaultFontName Courier
 * Platform
     * If any trading platform does not support Python anymore, my app will crash.
 
+{.feedback
+
+Why? If you access your data sources over HTTP/JSON, do you really care if they do not support Python?
+
+}
 
 ## 6. Adapter solves the mismatch using code or pseudocode
+
+
+{.feedback
+
+The code is a bit verbose, please highlight or add comments to point to the essential part where the adaptation takes place.
+
+}
 
 #### psycopg2 database Adapter
     pip install psycopg2
