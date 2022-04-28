@@ -1517,6 +1517,412 @@ Whenever you have a connector you couple together the components and different c
 
 }
 
+## 1. Highlight the connector and components as adapter
+
+```puml
+@startuml
+skinparam componentStyle true
+
+!include <tupadr3/font-awesome/database>
+
+title "TradAgg" Logical View
+interface " " as TAI
+
+component "User Interface" as UI
+component "Web API" as API
+interface " " as APII
+
+UI --( APII
+APII -- API
+
+component "BackEnd" as BE {
+    component "Trading Aggregator" as TA
+    interface " " as TAI
+
+    component "Schedule" as SCH
+    interface " " as SCHI
+
+    component "Graph visualization" as GV
+    interface " " as GVI
+
+    component "PostgreSQL Database <$database{scale=0.33}>" as DB
+    interface " " as DBI
+
+    [<<adapter>> psycopg2] as PADAPTER #Orange
+    interface " " as PADAPTERI
+
+    component "Exchange rate" as ER
+    interface " " as ERI
+
+    component "Gmail Handler" as GM
+    interface " " as GMI
+    
+    component "Trading platforms" as TP {
+        component "Coinbase API" as CAPI
+        interface " " as CAPII
+        CAPII - CAPI
+
+        component "Binance API" as BAPI
+        interface " " as BAPII
+        BAPI - BAPII
+ 
+        component "Interactive Brokers API" as IBAPI
+        interface " " as IBAPII
+        IBAPII - IBAPI
+    }
+    interface " " as TPI
+
+    [<<adapter>> Web API] as AADAPTER #Orange
+    interface " " as AADAPTERI
+
+    TA -( AADAPTERI
+    AADAPTERI - AADAPTER
+    AADAPTER -( TPI
+    TPI - TP
+    
+    TA --( GVI
+    GVI -- GV
+
+    TA --( SCHI
+    SCHI -- SCH
+
+    TA --( PADAPTERI
+    PADAPTERI -- PADAPTER
+    PADAPTER --( DBI
+    DBI -- DB
+
+    TA --( ERI
+    ERI -- ER
+
+    TA --( GMI
+    GMI -- GM
+}
+
+API --( TAI 
+TAI -- TA
+
+skinparam monochrome false
+skinparam shadowing false
+skinparam defaultFontName Courier
+@enduml
+```
+
+## 2. Which kind of mismatch are they solving?
+
+### PostgreSQL database not compatible with Python
+In order to create a mismatch in my logical view, I replaced mySQL database with PostgreSQL. PostgreSQL is a perfect match for Java. However, I code in Python. Hence, it is necessary to introduce an Adapter the psycopg2, which is a database adapter. This adapter enables to connect to the PostgreSQL database server in Python using the psycopg2.
+
+
+### Bridge - Web API Adapter
+Web API is a kind of bridge between the external component (Trading platforms) and the Trading Aggregator (controller). Tradding Aggregator sends a HTTP request to Web API and Web API forwards it to the Trading platforms. Then the Trading platforms send a HTTP response to the Web API and the Web API forwards it to the Tradding Aggregator.
+
+## 3. Wrapper
+```puml
+@startuml
+skinparam componentStyle true
+
+!include <tupadr3/font-awesome/database>
+
+title "TradAgg" Logical View
+interface " " as TAI
+
+component "User Interface" as UI
+component "Web API" as API
+interface " " as APII
+
+UI --( APII
+APII -- API
+
+component "BackEnd" as BE {
+    component "Trading Aggregator" as TA
+    interface " " as TAI
+
+    component "Schedule" as SCH
+    interface " " as SCHI
+
+    component "Graph visualization" as GV
+    interface " " as GVI
+
+    component "PostgreSQL wrapper" as PW #Orange {
+        component "PostgreSQL Database <$database{scale=0.33}>" as DB
+        interface " " as DBI
+        [<<adapter>> psycopg2] as PADAPTER
+    }
+    interface " " as PADAPTERI
+
+    component "Exchange rate" as ER
+    interface " " as ERI
+
+    component "Gmail Handler" as GM
+    interface " " as GMI
+    
+    component "Trading Platforms wrapper" as TPW #Orange {
+        component "Trading platforms" as TP {
+            component "Coinbase API" as CAPI
+            interface " " as CAPII
+            CAPII - CAPI
+
+            component "Binance API" as BAPI
+            interface " " as BAPII
+            BAPI - BAPII
+    
+            component "Interactive Brokers API" as IBAPI
+            interface " " as IBAPII
+            IBAPII - IBAPI
+        }
+        interface " " as TPI
+
+        [<<adapter>> Web API] as AADAPTER
+    }
+
+    interface " " as AADAPTERI
+
+    TA -( AADAPTERI
+    AADAPTERI - AADAPTER
+    AADAPTER -( TPI
+    TPI - TP
+    
+    TA --( GVI
+    GVI -- GV
+
+    TA --( SCHI
+    SCHI -- SCH
+
+    TA --( PADAPTERI
+    PADAPTERI -- PADAPTER
+    PADAPTER --( DBI
+    DBI -- DB
+
+    TA --( ERI
+    ERI -- ER
+
+    TA --( GMI
+    GMI -- GM
+}
+
+API --( TAI 
+TAI -- TA
+
+skinparam monochrome false
+skinparam shadowing false
+skinparam defaultFontName Courier
+@enduml
+```
+
+## 4. Where would standard interfaces play a role in your architecture? Which standards could be relevant in your domain?
+
+### Where and which standards?
+* Exchange rate
+    * Represantation format - Plain text - Json file
+    * Operations - HTTP Method GET
+    * Protocols - HTTP
+    * Addressing - URL - "https://api.exchangerate.host/latest"
+
+* Trading platforms - Coinbase
+    * Representation format - Plain text - Json file
+    * Operations - HTTP Methods GET and POST
+    * Protocols - HTTP
+    * Addressing - "https://api.coinbase.com/v2/accounts"
+
+* Gmail Handler
+    * Representation format - MIMEText(), base64.urlsafe_b64encode(message.as_string())
+    * Operations - HTTP Method POST
+    * Protocols - HTTP
+    * Addressing - "https://gmail.googleapis.com/gmail/v1/users/{userId}/messages/send"
+
+## 5. Explain how one or more pairs of components are coupled according to different coupling facets
+
+### User Interface and Trading Aggregator
+
+* Timing
+    * User Interface and Trading Aggregator must be available at the same time because it is synchronous call.
+
+* Interaction
+    * User Interface is directly connected to the Trading Aggregator.
+
+
+### Trading Aggregator and Trading platforms
+
+* Timing
+    * Both components have to be available at the same time to get portfolio of an user.
+
+* Discovery
+    * Trading Aggregator finds the Trading platforms component at running time using web API as HTTP request/response.
+
+### Trading Aggregator and Exchange Rate
+
+* Discovery
+    * Trading Aggregator finds the Exchange Rate component at running time thanks to the URL.
+
+### Trading Aggregator App and Trading Platforms
+
+* Platform
+    * If any trading platform does not support Python anymore, my app will crash.
+
+
+## 6. Adapter solves the mismatch using code or pseudocode
+
+#### psycopg2 database Adapter
+    pip install psycopg2
+
+    # Import psycopg2 Adapter
+    import psycopg2
+
+    # Establish connection
+    connection = psycopg2.connect(database="postgres", user='postgres', password='646hkh?kjbk', host='127.0.0.1', port= '5432')
+
+    # Create cursor
+    cursor = connection.cursor()
+
+    # Create a database
+    cursor.execute('''CREATE database tradagg''')
+
+    # Create users table
+    sql_create_table_users ='''CREATE TABLE USERS(
+    USERNAME CHAR(20) PRIMARY KEY,
+    PASSWORD CHAR(50),
+    FIRST_NAME VARCHAR(20),
+    LAST_NAME VARCHAR(20),
+    PORTFOLIO_NUMBER INT REFERENCES PORTFOLIO(PORTFOLIO_NUMBER) NOT NULL,
+    )'''
+    cursor.execute(sql_create_table_users)
+
+    # INSERT data into users table
+    cursor.execute('''INSERT INTO USERS(USERNAME, PASSWORD, FIRST_NAME, LAST_NAME, PORTFOLIO_NUMBER) VALUES ('tmshts', 'fsfs4979fdasi98798798', 'Tomas', 'Hatas', 1)''')
+
+    # Commit changes in database
+    connection.commit()
+
+    # Close the connection
+    connection.close()
+
+
+#### Web API Adapter
+
+    # 1. step Register a new OAuth2 application under https://www.coinbase.com/sign-in
+
+    # Data received after registering my app
+
+    my_id_coinbase = '1532c63424622b6e9c4654e7f97ed40194a1547e114ca1c682f44283f39dfa49'
+
+    my_client_secret_coinbase = '3a21f08c585df35c14c0c43b832640b29a3a3a18e5c54d5401f08c87c8be0b20'
+
+    # 2. step Integrate my app with Coinbase
+
+    ## 1. Redirect users to request Coinbase access
+
+    import requests
+
+    my_uri = 'https://www.tradagg.com'
+
+    my_state_coinbase = '134ef5504a94'
+
+    pload = {
+        'response_type': code,
+        'client_id': my_id_coinbase, 'redirect_uri': my_uri,
+        'state': my_state_coinbase,
+        'scope': wallet:user:read wallet:accounts:read
+        }
+
+    authorization_request = requests.get('https://www.coinbase.com/oauth/authorize/get', params=pload)
+
+    ## 2. Coinbase redirects back to your site with temporary code
+
+    # GET https://tradagg.com/oauth/callback?code=4c666b5c0c0d9d3140f2e0776cbe245f3143011d82b7a2c2a590cc7e20b79ae8&state=134ef5504a94
+
+    from urllib.parse import urlparse
+    from urllib.parse import parse_qs
+
+    url = 'https://tradagg.com/oauth/callback?code=4c666b5c0c0d9d3140f2e0776cbe245f3143011d82b7a2c2a590cc7e20b79ae8&state=134ef5504a94'
+    parsed_url = urlparse(url)
+    temporary_code_value = parse_qs(parsed_url.query)['code'][0]
+
+    ## 3. Exchange temporary code for an access token
+
+    dataload = {
+        'grant_type': authorization_code,
+        'code': temporary_code_value,
+        'client_id': my_id_coinbase,
+        'client_secret': my_client_secret_coinbase,
+        'redirect_uri': my_uri
+    }
+
+    access_token_data = requests.post('https://api.coinbase.com/oauth/token/post', data=dataload)
+
+    # Valid Access Token as response
+
+    '''
+    {
+    "access_token": "6915ab99857fec1e6f2f6c078583756d0c09d7207750baea28dfbc3d4b0f2cb80",
+    "token_type": "bearer",
+    "expires_in": 7200,
+    "refresh_token": "73a3431906de603504c1e8437709b0f47d07bed11981fe61b522278a81a9232b7",
+    "scope": "wallet:user:read wallet:accounts:read"
+    }
+    '''
+
+    # extract access_token and token_type from json file
+
+    import json as js
+
+    json_load = js.loads(access_token_data)
+
+    access_token_value = ''
+    token_type_value = ''
+
+    for i in json_load:
+        if i == 'access_token':
+            access_token_value = json_load[i]
+        if i == 'token_type':
+            token_type_value = json_load[i]
+
+    # 4. API Call
+    authorization_data = {
+        token_type_value,
+        access_token_value
+    }
+
+    user_data = requests.get('https://api.coinbase.com/v2/user/authorization', params=authorization_data)
+    
+
+    # Json file response
+    '''
+    {
+        "data":
+        {
+        "id": "9da7a204-544e-5fd1-9a12-61176c5d4cd8",
+        "name": "Peter Smith",
+        "username": "pertersmith88",
+        "profile_location": null,
+        "profile_bio": null,
+        "profile_url": "https://coinbase.com/pertersmith88",
+        "avatar_url": "https://images.coinbase.com/avatar?h=vR%2FY8igBoPwuwGren5JMwvDNGpURAY%2F0nRIOgH%2FY2Qh%2BQ6nomR3qusA%2Bh6o2%0Af9rH&s=128",
+        "resource": "user",
+        "resource_path": "/v2/user"
+        }
+    }
+    '''
+
+    json_load = js.loads(user_data)
+
+
+## 7. How can you improve your architectural model to minimize coupling between components? (Include a revised logical/connector view with your solution)
+
+### Connector view
+![Example Connector View Diagram](./examples/connector-view-updated.c5)
+
+I am not aware of the fact that I can improve my architectural model to minimize coupling between components for the reasons:
+
+* Remote Procedure Call (synchronous call) between User Interface and Trading Agreggator must remain as User Interface is blocked until the call is responded.
+
+* Message bus between Trading Platforms and Trading Aggregator must remain because of subscription for news - less coupled than in case of Remote Procedure Call which is great - ASYNC AVAILABILITY
+
+* Web API between Trading Aggregator and Gmail Handler, Exchange Rate and Trading Platforms must remain because of HTTP requests.
+
+* Asynchronous call between Trading Aggregator and Schedule and Graph visualization since Trading Aggregator can not be blocked for the time waiting for response. Less coupled than in case of Remote Procedure Call.
+
+
+
 # Ex - Physical and Deployment Views
 
 {.instructions
