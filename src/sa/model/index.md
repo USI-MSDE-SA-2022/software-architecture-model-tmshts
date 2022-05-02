@@ -1977,6 +1977,52 @@ Exceed: 1 physical view, 1 deployment view, 1 ADR (b.) + 1 demo (c.)
 
 }
 
+## a.
+
+### 1. physical view
+
+
+## b. ADR
+
+* What did you decide?
+    * In order to launch the product on the market I need a deployment strategy.
+
+* What was the context for your decision?
+    * The point is that we do not have any version on the market. In other words, we launch our first version of TradAgg on the market.
+    Our goal is not to make bad reputation for the entire market. Therefore, we only want to touch a market with few users (friends, acquaintances, fake profiles, etc.) for a limited time. Thus, we will get a feedback from the users and consequently we can make some changes in our software.
+    After making some changes, we use the Gradual Phase-In on real users. In this case, we can check the feedback from users and if everything goes according to a plan, we can bring more users, and so on.
+
+* What is the scope of your decision? Does it affect the entire architecture?
+    * If some issue appears, it may affect the entire backend or frotend depending on the scope of issue.
+
+* What is the problem you are trying to solve?
+    * The best strategy how to deploy my TradAgg application.
+
+* Which alternative options did you consider?
+    List at least 3 options:
+
+  * Pilot
+  * Gradual Phase-in
+  * Canary
+
+* Which one did you choose?
+    * Pilot
+
+* What is the main reason for that?
+  #### Advantages:
+  * Meticulousness - double-check
+  * Avoid bad reputation
+  * Quick feedback from fake users
+  * Real users untouched
+  * Time to work on buggs
+
+  #### Disadvantages:
+  * Longer time to launch a product for real users
+
+
+## c. demo
+
+
 # Ex - Availability and Services
 
 {.instructions
