@@ -2021,7 +2021,7 @@ Exceed: 1 physical view, 1 deployment view, 1 ADR (b.) + 1 demo (c.)
 
 
 ## c. demo
-
+it should work
 
 # Ex - Availability and Services
 
