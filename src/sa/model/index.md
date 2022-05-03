@@ -1979,8 +1979,148 @@ Exceed: 1 physical view, 1 deployment view, 1 ADR (b.) + 1 demo (c.)
 
 ## a.
 
-### 1. physical view
+### 1. Physical view
 
+```puml
+@startuml
+node "<<device>> :Application Server" as appnode {
+    node "<<executionenvironment>> :PythonVM" {
+    }
+}
+
+node "<<device>> :Web Server" as webnode{
+}
+
+node "<<device>> :ClientPC" as usernode{
+    node "<<executionenvironment>> :Browser" {
+    }
+}
+
+node "<<device>> :Database Server" as dbservernode{
+}
+
+node "<<device>> :Exchange Rate Server" as exchangenode{
+}
+
+node "<<device>> :Gmail Server" as gmailnode{
+}
+
+node "Trading platforms" as platformsnode{
+    node "<<device>> :Binance Server" {
+    }
+    node "<<device>> :Coinbase Server" {
+    }
+    node "<<device>> :Interactive Brokers Server" {
+    }
+}
+
+node "<<device>> :Schedule Server" as schedulenode{
+}
+
+node "<<device>> :Graph Visualization Server" as graphnode{
+}
+
+appnode -- webnode : <<internet>>
+
+webnode -- usernode : <<internet>>
+
+appnode --- graphnode : <<internet>>
+
+appnode --- schedulenode : <<internet>>
+
+appnode - platformsnode : <<HTTPS>>
+
+appnode --- gmailnode : <<HTTPS>>
+
+appnode -- exchangenode : <<HTTPS>>
+
+appnode -- dbservernode : <<internet>>
+
+
+skinparam monochrome false
+skinparam shadowing false
+skinparam defaultFontName Courier
+@enduml
+```
+
+### 2. Deployment view
+
+```puml
+@startuml
+skinparam componentStyle true
+
+!include <tupadr3/font-awesome/database>
+
+node "<<device>> :Application Server" as appnode {
+    component "Trading Aggregator" as TA
+    node "<<executionenvironment>> :PythonVM" {
+    }
+}
+
+node "<<device>> :Web Server" as webnode{
+    component "Web API" as API
+}
+
+node "<<device>> :ClientPC" as usernode{
+    component "User Interface" as UI
+    node "<<executionenvironment>> :Browser" {
+    }
+}
+
+node "<<device>> :Database Server" as dbservernode{
+    component "MySQL Database <$database{scale=0.33}>" as DB
+}
+
+node "<<device>> :Exchange Rate Server" as exchangenode{
+    component "Exchange rate" as ER
+}
+
+node "<<device>> :Gmail Server" as gmailnode{
+    component "Gmail Handler" as GM
+}
+
+node "Trading platforms" as platformsnode{
+    node "<<device>> :Binance Server" {
+        component "Binance API" as BAPI
+    }
+    node "<<device>> :Coinbase Server" {
+        component "Coinbase API" as CAPI
+    }
+    node "<<device>> :Interactive Brokers Server" {
+        component "Interactive Brokers API" as IBAPI
+    }
+}
+
+node "<<device>> :Schedule Server" as schedulenode{
+    component "Schedule" as SCH
+}
+
+node "<<device>> :Graph Visualization Server" as graphnode{
+    component "Graph visualization" as GV
+}
+
+appnode -- webnode : <<internet>>
+
+webnode -- usernode : <<internet>>
+
+appnode --- graphnode : <<internet>>
+
+appnode --- schedulenode : <<internet>>
+
+appnode - platformsnode : <<HTTPS>>
+
+appnode --- gmailnode : <<HTTPS>>
+
+appnode -- exchangenode : <<HTTPS>>
+
+appnode -- dbservernode : <<internet>>
+
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Courier
+@enduml
+```
 
 ## b. ADR
 
