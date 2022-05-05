@@ -2288,7 +2288,7 @@ skinparam defaultFontName Courier
 
 
 ## c. demo
-it should work now :)
+it should work now 2nd attempt:)
 
 # Ex - Availability and Services
 
