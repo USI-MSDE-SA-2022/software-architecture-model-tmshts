@@ -2366,7 +2366,7 @@ appnode -- usernode : <<internet>>
 
 appnode - platformsnode : <<HTTPS>>
 
-appnode --- gmailnode : <<HTTPS>>
+appnode --- gmailnode : <<IMAP>>
 
 appnode -- exchangenode : <<HTTPS>>
 
@@ -2493,7 +2493,7 @@ watchnode -- exchangenode: <<HTTPS>>
 
 watchnode -- dbservernode : <<HTTPS>>
 
-appnode -- gmailnode : <<HTTPS>>
+appnode -- gmailnode : <<IMAP>>
 
 appnode -- exchangenode : <<HTTPS>>
 
@@ -2540,6 +2540,8 @@ Is the MySQL server an external or an internal component?
 ## 5. What happens when a stateless component goes down? model a sequence diagram to show what needs to happen to recover one of your critical stateless components
 
 Exchange rate has had 99.99 % average uptime during last 12 months. In other words, Exchange Rate is very reliable. Hence, we do not expect any downtime. However, if it occurs we use retry strategy how to recover from temporary failure.
+
+We could also add Circuit Breaker so that an user gets a faster response about a failure if an user selects EUR in a while again.
 
 Note: Any timeout is a matter of business rule which can be discussed/modified during time.
 
@@ -2636,7 +2638,7 @@ end
 
 * Exchange Rate - we do not suppose that this Exchange Rate would have any downtime because of 99.9 % availability in the last 12 months. However, in case of downtime, we keep retrying for 3 seconds (timeout is a matter of our business rule which can be modified). If there is still no response after 3 seconds, we can use another External Dependency like Exchange Rate. Our requirement would be that the alternative has mainly free service as well.
 
-* Gmail Handler - we could also have another email with different provider, such as Yahoo. In case of downtime of Gmail, we could use Yahoo as External Dependency. The prices are updated at 4 PM and 10 PM and then eventually a notification email is sent to an user in case of price alert. If the Gmail is not available, we just keep retrying for 1 hour (this timeout is a matter of business rule which can be discussed/modified). If there is still no response after 1 hour, we could use our alternative Yahoo.
+* Gmail Handler - we could also have another email with different provider, such as Yahoo. In case of downtime of Gmail, we could use Yahoo as External Dependency. The prices are updated at 4 PM and 10 PM and then eventually a notification email is sent to an user in case of price alert. If the Gmail is not available, we just keep retrying for 1 hour (this timeout is a matter of business rule which can be discussed/modified). If there is still no response after 1 hour, we could use our alternative Yahoo. According to Fabio, another option would be a message queue. Once the Gmail is available again, the messages will be pushed to the Gmail server.
 
 
 * Circuit Breaker could be helpful because we could decrease response time. Once Trading Aggregator calls Circuit Breaker and then call the External Dependency, a failure may occur. Hence, External Dependency does not response. After timeout Circuit Breaker report the failure to the Trading Aggregator. Circuit Breaker remembers the failure. If Trading Aggregator calls the External Dependency later, Circuit Breaker remembers the failture and thus respond the failure faster.
@@ -2644,7 +2646,7 @@ end
 
 ```puml
 @startuml
-title "Exchange Rate goes down" Process View
+title "Trading Platform goes down" Process View
 
 participant "Trading Aggregator" as TA
 participant "Circuit Breaker" as CB
@@ -2664,6 +2666,8 @@ CB -> TA: faster response - Trading Platform failed
 ```
 Do you plan to use polling for checking the external dependencies or a circuit breaker can help you?
 ```
+
+
 # Ex - Scalability
 
 {.instructions
