@@ -2313,6 +2313,320 @@ Exceed: 1, 2, 3, 4, 5, 6, 7, 8
 
 }
 
+
+## 1. deployment design so that your software is hosted on a server (which could be running as a Cloud VM). Your SaaS architecture should show how your SaaS can be remotely accessed from a client such as a Web browser, or a mobile app
+
+```puml
+@startuml
+skinparam componentStyle true
+
+!include <tupadr3/font-awesome/database>
+
+
+cloud "Amazon Web Services (AWS)" {
+    node "<<executionenvironment>> :PythonVM" as appnode {
+        component "Schedule" as SCH
+        component "Graph visualization" as GV
+        component "Trading Aggregator" as TA
+    }
+}
+
+node "<<device>> :Database Server" as dbservernode{
+    component "MySQL Database <$database{scale=0.33}>" as DB
+}
+
+
+node "<<device>> :ClientPC" as usernode{
+    node "<<executionenvironment>> :Browser" {
+        component "User Interface" as UI
+    }
+}
+
+node "<<device>> :Exchange Rate Server" as exchangenode{
+    component "Exchange rate" as ER
+}
+
+node "<<device>> :Gmail Server" as gmailnode{
+    component "Gmail Handler" as GM
+}
+
+node "Trading platforms" as platformsnode{
+    node "<<device>> :Binance Server" {
+        component "Binance API" as BAPI
+    }
+    node "<<device>> :Coinbase Server" {
+        component "Coinbase API" as CAPI
+    }
+    node "<<device>> :Interactive Brokers Server" {
+        component "Interactive Brokers API" as IBAPI
+    }
+}
+
+appnode -- usernode : <<internet>>
+
+appnode - platformsnode : <<HTTPS>>
+
+appnode --- gmailnode : <<HTTPS>>
+
+appnode -- exchangenode : <<HTTPS>>
+
+appnode -- dbservernode : <<network VPC>>
+
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Courier
+@enduml
+```
+
+## 2. Service pricing model
+
+```puml
+@startuml
+skinparam titleFontSize 22
+title
+  Pricing model
+  |=            |= Starter   |= Professional    |= Expert   |
+  | Price/month | Free      | 5 USD            | 10 USD   |
+  | Number of platforms | 2 | 4 | unlimited |
+  | Number of stocks/cryptocurrencies | 5 | 15 | unlimited |
+end title
+@enduml
+```
+
+## 3. How would you define the availability requirements in your project domain? For example, what would be your expectation for the duration of planned/unplanned downtimes or the longest response time tolerated by your clients?
+
+### Availability
+Since we pull the actual prices from the trading platforms 2x a day (4 pm and 10 pm), the availability of our TradAgg app must be available at these hours. The reason is if the user set a price alert for a certain amount, the price will alert at these hours as we pull up-to-date prices and consequently the user will get a notification via email.
+
+In other words, the Trading Aggregator, Trading platforms, MySQL database, Gmail Handler and Schedule components must be available at these hours.
+If the Trading Aggregator or Trading Platforms are not available at these hours, the Trading Aggregator component will pull the prices once the Trading platforms are available. Consequently, if a set price is reached, the Gmail handler will notify an user soon or later.
+At other hours, the Trading Aggregator, Graph visualization, MySQL database and Exchange Rate components must be available since an user would like to visualize his/her portfolio. If the Graph visualization or Exchange Rate are not available, the user will get a message that it is not possible to visualize a graph at this moment.
+In terms of setting a price alert, if MySQL database is not available, the user will get a message that it is not possible to set a price alert at this moment.
+In terms of adding stocks/cryptos, if the Trading platforms are not available, the user will get a message that the Trading Platform is not available at this moment.
+
+### Downtimes
+The planned downtimes for maintenance should not be at 4 PM and 10 PM. At other hours are not desirable either :) Anyway, it is necessary to inform a client about these planned downtimes in advance.
+
+The unplanned downtimes are unpredictable. The crucial hours are at 4 PM and 10 PM. For another hours are unplanned downtimes undesirable either. If the services are not available, the user will be informed.
+
+We may expect not many users using the TradAgg App at the beginning of our journey. Consequently, we assume that we will not have the remote procedure calls from users all the minutes/seconds. Hence, the downtimes can be tolerated if the users do not use the TradAgg App.
+
+The duration of downtimes if the user wishes to use the TradAgg App has to be minimal.
+
+### Response time
+Longest response time tolerated by users can be up to 3 sec since the users are patient/tolerant. In fact, an user has not very high expectation related to response time as he can use just a few calls. An user will rather use this TradAgg app in a relaxed/calm time and not in rush time.
+
+## 4. Which strategy do you adopt to monitor your service's availability? Extend your architecture with a watchdog or a heartbeat monitor and motivate your choice with an ADR.
+
+
+### Monitor Strategy: Watchdog
+
+```puml
+@startuml
+skinparam componentStyle true
+
+!include <tupadr3/font-awesome/database>
+
+
+cloud "Amazon Web Services (AWS)" {
+    node "<<executionenvironment>> :PythonVM" as appnode {
+        component "Schedule" as SCH
+        component "Graph visualization" as GV
+        component "Trading Aggregator" as TA
+    }
+}
+
+node "<<device>> :Database Server" as dbservernode{
+    component "MySQL Database <$database{scale=0.33}>" as DB
+}
+
+
+node "<<device>> :ClientPC" as usernode{
+    node "<<executionenvironment>> :Browser" {
+        component "User Interface" as UI
+    }
+}
+
+node "<<device>> :Exchange Rate Server" as exchangenode{
+    component "Exchange rate" as ER
+}
+
+node "<<device>> :Gmail Server" as gmailnode{
+    component "Gmail Handler" as GM
+}
+
+node "Trading platforms" as platformsnode{
+    node "<<device>> :Binance Server" {
+        component "Binance API" as BAPI
+    }
+    node "<<device>> :Coinbase Server" {
+        component "Coinbase API" as CAPI
+    }
+    node "<<device>> :Interactive Brokers Server" {
+        component "Interactive Brokers API" as IBAPI
+    }
+}
+
+node "<<executionenvironment>> :PythonVM" as watchnode{
+    component "Watchdog" as WATCH
+}
+
+
+appnode -- usernode : <<internet>>
+
+appnode - platformsnode : <<HTTPS>>
+
+TA -- watchnode : <<HTTPS>>
+
+watchnode -- platformsnode : <<HTTPS>>
+
+gmailnode -- watchnode : <<HTTPS>>
+
+watchnode -- exchangenode: <<HTTPS>>
+
+watchnode -- dbservernode : <<HTTPS>>
+
+appnode -- gmailnode : <<HTTPS>>
+
+appnode -- exchangenode : <<HTTPS>>
+
+appnode -- dbservernode : <<network VPC>>
+
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Courier
+@enduml
+```
+
+### ADR
+
+* What did you decide?
+    * Watchdog. We will check the availability of our services periodically by sending a kind of remote procedure call.
+
+* What was the context for your decision?
+    * We have to monitor the availability of the services we use. Since the TradAgg is an aggregator, we aggregate many external Trading platforms. Moreover, there are more external services we use in the TradAgg app, such as MySQL, Exchange rate and Gmail.
+
+* What is the scope of your decision? Does it affect the entire architecture?
+    * As our application relies on many external services, it affects the entire architecture.
+
+* What is the problem you are trying to solve?
+    * To monitor availability.
+
+* Which alternative options did you consider?
+    * Watchdog
+    * Heartbeat
+
+* Which one did you choose?
+    * Watchdog
+
+* What is the main reason for that?
+    * There are some issue with the subscription to the heartbeat channel from some trading platforms. Therefore, we have only one option how to monitor the availability of the Trading platforms.
+    * We also use a watchdog for MySQL database, Exchange Rate and Gmail as we are not sure whether we can manage to run properly the heartbeat due to the lack of IT skills.
+
+## 5. What happens when a stateless component goes down? model a sequence diagram to show what needs to happen to recover one of your critical stateless components
+
+Exchange rate has had 99.99 % average uptime during last 12 months. In other words, Exchange Rate is very reliable. Hence, we do not expect any downtime. However, if it occurs we use retry strategy how to recover from temporary failure.
+
+Note: Any timeout is a matter of business rule which can be discussed/modified during time.
+
+
+```puml
+@startuml
+title "Exchange Rate goes down" Process View
+
+participant "User Interface" as UI
+participant "Trading Aggregator" as TA
+participant "Database" as DA
+participant "Exchange rate" as ER
+participant "Graph Visualization" as GV
+
+UI -> TA: select EUR
+TA -> DA: cursor.execute(sql_query)
+DA -> TA: cursor.fetchall()
+TA -> ER: request.get(URL)
+TA -> TA: timeout 1.3 sec
+TA -> ER: retry
+TA -> TA: timeout 1.3 sec
+TA -> ER: retry
+
+alt response 200 OK during timeout
+ER -> TA: response.json()
+TA -> TA: convert prices
+TA -> GV: px.pie(data)
+GV -> TA: fig.show()
+TA -> UI: provide pie chart
+
+else no response during timeout
+TA -> UI: Inform about unavailability
+
+end
+
+@enduml
+```
+
+## 6. How do you plan to recover stateful components? write an ADR about your choice of replication strategy and whether you prefer consistency vs. availability. Also, consider whether event sourcing would help in your context.
+
+### ADR
+
+* What did you decide?
+    * Synchronous replication of our database preferring strong consistency over availability.
+
+* What was the context for your decision?
+    * In case of loosing data, it is a big problem for our reputation and business in general. Clients may not sue us for loosing data because they can check their portfolio on the Trading platforms separately. But they definitely will not use our TradAgg app anymore. Therefore, we have to have a back-up.
+    We assume that our clients are time tolerant. We are meticulous and hence we can not afford any inconsistent data in case the original database crashes or partition between original database and back-up database.
+
+* What is the problem you are trying to solve?
+    * How to replicate the database in order to have strong consistency.
+
+* Which alternative options did you consider?
+    * Synchronous replication
+    * Asynchronous replication
+
+* Which one did you choose?
+    * Synchronous replication
+
+* What is the main reason for that?
+    * We can not take a risk with asynchronous replication which can provide NOT up-to-date data to an user.
+    Writing to back-up can take a while and a client prefers wait for the current result rather than checking old data.
+    * In case of partition between original and back-up database, client must wait in order to get up-to-date data.
+    * In both above cases, we inform a client by providing a message of the explanation.
+    * Our motto: "Consistency is a key."
+
+* Event Sourcing would not be helpful in our context.
+
+## 7. How do you plan to avoid cascading failures? Be ready to discuss how the connectors (modeled in your connector view) impact the reliability of your architecture.
+
+### Connector View Diagram
+![Example Connector View Diagram](./examples/connector-view-original.c5)
+
+
+## Cascading failures
+
+* The Trading Aggregator component is a controller, which controls all the flow and logic behind the TradAgg App. From the graph you can see that the Trading Aggregator component requests something from 1 component and get a response. After that the Trading Aggregator component edits it and transmit it to another component. Therefore, the cascading failures can not happen and thus no need of canary call.
+
+## Reliability
+
+* As you can see from the connector view, Trading Aggregator component uses mostly API for Gmail Handler, Exchange Rate and Trading Platforms. In terms of availability, our strategy is to keep retrying until a reasonable timeout which is about 3 seconds. If Trading Aggregator does not get any response during the timeout, he will inform an user about the current unavailability.
+* "We are sorry. At this moment we can not connect to your Trading Platform. We are working on it so that you are able to add your stocks ASAP. Please try it later."
+
+
+## 8. How did you mitigate the impact of your external dependencies being not available? (if applicable)
+
+### External Dependencies:
+* Trading Platforms
+* Exchange Rate
+* Gmail Handler
+
+### How to mitiage in case external dependencies are not available:
+* Trading Platforms - we have no other option to select any alternative if an user has stocks/cryptos in the specific Trading Platform. Hence, we keep retrying for 3 seconds. If there is no response after timeout, we notify an user and he should try later.
+
+* Exchange Rate - we do not suppose that this Exchange Rate would have any downtime because of 99.9 % availability in the last 12 months. However, in case of downtime, we keep retrying for 3 seconds (timeout is a matter of our business rule which can be modified). If there is still no response after 3 seconds, we can use another External Dependency like Exchange Rate. Our requirement would be that the alternative has mainly free service as well.
+
+* Gmail Handler - we could also have another email with different provider, such as Yahoo. In case of downtime of Gmail, we could use Yahoo as External Dependency. The prices are updated at 4 PM and 10 PM and then eventually a notification email is sent to an user in case of price alert. If the Gmail is not available, we just keep retrying for 1 hour (this timeout is a matter of business rule which can be discussed/modified). If there is still no response after 1 hour, we could use our alternative Yahoo.
+
+
 # Ex - Scalability
 
 {.instructions
