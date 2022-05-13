@@ -2379,7 +2379,7 @@ skinparam defaultFontName Courier
 @enduml
 ```
 
-* Yes, it should use HTTPS: https://developers.google.com/gmail/api/reference/rest
+* You are right. Trading Aggregator communicates with Gmail server via gmail protocols IMAP and POP: https://support.google.com/a/answer/9003945?hl=en
 
 ```
 Are you sure that Gmail server interact with your server using HTTP(S) protocol? Maybe it uses the IMAP/POP3 
