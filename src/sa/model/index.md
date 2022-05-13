@@ -2378,9 +2378,13 @@ skinparam shadowing false
 skinparam defaultFontName Courier
 @enduml
 ```
+
+* Yes, it should use HTTPS: https://developers.google.com/gmail/api/reference/rest
+
 ```
 Are you sure that Gmail server interact with your server using HTTP(S) protocol? Maybe it uses the IMAP/POP3 
 ```
+
 ## 2. Service pricing model
 
 ```puml
@@ -2509,6 +2513,10 @@ skinparam defaultFontName Courier
 
 * What was the context for your decision?
     * We have to monitor the availability of the services we use. Since the TradAgg is an aggregator, we aggregate many external Trading platforms. Moreover, there are more external services we use in the TradAgg app, such as MySQL, Exchange rate and Gmail.
+
+
+* You are right, MySQL is not counted as external service. It is our internal component. As a matter of fact, that is the reason, why I did not include MySQL in the task 8 related to the external dependencies.
+
 ```
 Is the MySQL server an external or an internal component?
 ```
@@ -2629,6 +2637,29 @@ end
 * Exchange Rate - we do not suppose that this Exchange Rate would have any downtime because of 99.9 % availability in the last 12 months. However, in case of downtime, we keep retrying for 3 seconds (timeout is a matter of our business rule which can be modified). If there is still no response after 3 seconds, we can use another External Dependency like Exchange Rate. Our requirement would be that the alternative has mainly free service as well.
 
 * Gmail Handler - we could also have another email with different provider, such as Yahoo. In case of downtime of Gmail, we could use Yahoo as External Dependency. The prices are updated at 4 PM and 10 PM and then eventually a notification email is sent to an user in case of price alert. If the Gmail is not available, we just keep retrying for 1 hour (this timeout is a matter of business rule which can be discussed/modified). If there is still no response after 1 hour, we could use our alternative Yahoo.
+
+
+* Circuit Breaker could be helpful because we could decrease response time. Once Trading Aggregator calls Circuit Breaker and then call the External Dependency, a failure may occur. Hence, External Dependency does not response. After timeout Circuit Breaker report the failure to the Trading Aggregator. Circuit Breaker remembers the failure. If Trading Aggregator calls the External Dependency later, Circuit Breaker remembers the failture and thus respond the failure faster.
+
+
+```puml
+@startuml
+title "Exchange Rate goes down" Process View
+
+participant "Trading Aggregator" as TA
+participant "Circuit Breaker" as CB
+participant "Trading Platform" as TP
+
+TA -> CB: call
+CB -> TP: call
+destroy TP
+CB -> CB: timeout
+CB -> TA: longer response - Trading Platform failed
+TA -> CB: call
+CB -> TA: faster response - Trading Platform failed
+
+@enduml
+```
 
 ```
 Do you plan to use polling for checking the external dependencies or a circuit breaker can help you?
