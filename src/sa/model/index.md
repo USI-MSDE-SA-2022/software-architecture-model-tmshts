@@ -2378,7 +2378,9 @@ skinparam shadowing false
 skinparam defaultFontName Courier
 @enduml
 ```
-
+```
+Are you sure that Gmail server interact with your server using HTTP(S) protocol? Maybe it uses the IMAP/POP3 
+```
 ## 2. Service pricing model
 
 ```puml
@@ -2507,7 +2509,9 @@ skinparam defaultFontName Courier
 
 * What was the context for your decision?
     * We have to monitor the availability of the services we use. Since the TradAgg is an aggregator, we aggregate many external Trading platforms. Moreover, there are more external services we use in the TradAgg app, such as MySQL, Exchange rate and Gmail.
-
+```
+Is the MySQL server an external or an internal component?
+```
 * What is the scope of your decision? Does it affect the entire architecture?
     * As our application relies on many external services, it affects the entire architecture.
 
@@ -2626,7 +2630,9 @@ end
 
 * Gmail Handler - we could also have another email with different provider, such as Yahoo. In case of downtime of Gmail, we could use Yahoo as External Dependency. The prices are updated at 4 PM and 10 PM and then eventually a notification email is sent to an user in case of price alert. If the Gmail is not available, we just keep retrying for 1 hour (this timeout is a matter of business rule which can be discussed/modified). If there is still no response after 1 hour, we could use our alternative Yahoo.
 
-
+```
+Do you plan to use polling for checking the external dependencies or a circuit breaker can help you?
+```
 # Ex - Scalability
 
 {.instructions
