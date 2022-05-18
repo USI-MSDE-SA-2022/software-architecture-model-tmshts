@@ -2692,6 +2692,1013 @@ Exceed: 1, 2, 3, 4, 5 then redo 1, 2, 3 for different scalability dimensions
 
 }
 
+
+## 1. scalability dimension
+### 1. Number of clients
+
+### 2. How well does your architecture scale along the chosen dimension? Where do you expect the bottleneck to be?
+We would be happy to face to the huge amount of users. This is a nice problem :)
+Bottleneck would be, definitely, the controller. But I can not forward the traffic to the "different" worker. Then I have to live with that in my architecture.
+However, I depend on external services which can be overloaded by many requests and hence they are bottlenecks. These external services are Graph Visualization, Exchange Rate and Gmail Handler.
+Therefore, I should also use alternatives for these external dependencies.
+The schedule is an event-driven external component and is "called" just 2x a day and is independent of amount of requests.
+There is no option to use alternatives for the Trading Platforms as there is only 1 Coinbase or only 1 Interactive Brokers.
+
+### 3. Modify your architecture to remove the scalability bottleneck you have identified (show both logical, process and deployment view) - consider whether the API/interface of the bottleneck component should be improved.
+
+
+#### Logical view before Load Balancing
+
+```puml
+@startuml
+skinparam componentStyle true
+
+!include <tupadr3/font-awesome/database>
+
+title "TradAgg" Logical View
+interface " " as TAI
+
+component "User Interface" as UI
+component "Web API" as API
+interface " " as APII
+
+UI --( APII
+APII -- API
+
+component "BackEnd" as BE {
+    component "Trading Aggregator" as TA
+    interface " " as TAI
+
+    component "Schedule" as SCH
+    interface " " as SCHI
+
+    component "Graph visualization" as GV
+    interface " " as GVI
+
+    component "Database <$database{scale=0.33}>" as DB
+    interface " " as DBI
+
+    component "Exchange rate" as ER
+    interface " " as ERI
+
+    component "Gmail Handler" as GM
+    interface " " as GMI
+    
+    component "Trading platforms" as TP {
+        component "Coinbase API" as CAPI
+        interface " " as CAPII
+        CAPII - CAPI
+
+        component "Binance API" as BAPI
+        interface " " as BAPII
+        BAPI - BAPII
+ 
+        component "Interactive Brokers API" as IBAPI
+        interface " " as IBAPII
+        IBAPII - IBAPI
+    }
+    interface " " as TPI
+    
+    TA --( GVI
+    GVI -- GV
+
+    TA --( SCHI
+    SCHI -- SCH
+
+    TA --( DBI
+    DBI -- DB
+    
+    TA -( TPI
+    TPI - TP
+
+    TA --( ERI
+    ERI -- ER
+
+    TA --( GMI
+    GMI -- GM
+}
+
+API --( TAI 
+TAI -- TA
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Courier
+@enduml
+```
+
+#### Logical view with Load Balancing
+
+* Strategy for Load Balancing is First Available
+
+```puml
+@startuml
+skinparam componentStyle true
+
+!include <tupadr3/font-awesome/database>
+
+title "TradAgg" Logical View
+interface " " as TAI
+
+component "User Interface" as UI
+component "Web API" as API
+interface " " as APII
+
+UI --( APII
+APII -- API
+
+component "BackEnd" as BE {
+    component "Trading Aggregator" as TA
+    interface " " as TAI
+
+    component "Schedule" as SCH
+    interface " " as SCHI
+
+    component "Graph visualization Default" as GV
+    interface " " as GVI
+
+    component "Database <$database{scale=0.33}>" as DB
+    interface " " as DBI
+
+    component "Exchange rate Default" as ER
+    interface " " as ERI
+
+    component "Gmail Handler Default" as GM
+    interface " " as GMI
+    
+    component "Trading platforms" as TP {
+        component "Coinbase API" as CAPI
+        interface " " as CAPII
+        CAPII - CAPI
+
+        component "Binance API" as BAPI
+        interface " " as BAPII
+        BAPI - BAPII
+ 
+        component "Interactive Brokers API" as IBAPI
+        interface " " as IBAPII
+        IBAPII - IBAPI
+    }
+    interface " " as TPI
+
+    component "Load Balancer for Graph Visualization" as LBGV
+    interface " " as LBGVI
+
+    component "Directory for Graph Visualization" as DGV
+    interface " " as DGVI
+
+    LBGV --( DGVI
+    DGVI -- DGV
+
+    TA --( LBGVI
+    LBGVI -- LBGV
+
+    LBGV --( GVI
+    GVI -- GV
+
+    component "Graph visualization A1" as GVA1
+    interface " " as GVA1I
+
+    LBGV --( GVA1I
+    GVA1I -- GVA1
+
+    component "Graph visualization A2" as GVA2
+    interface " " as GVA2I
+
+    LBGV --( GVA2I
+    GVA2I -- GVA2
+    
+    GV --( DGVI
+    GVA1 --( DGVI
+    GVA2 --( DGVI    
+
+    component "Load Balancer for Email" as LBGM
+    interface " " as LBGMI
+
+    component "Directory for Email" as DGM
+    interface " " as DGMI
+
+    TA --( LBGMI
+    LBGMI -- LBGM
+
+    LBGM --( DGMI
+    DGMI -- DGM
+
+    LBGM --( GMI
+    GMI -- GM
+
+    component "Yahoo Handler A1" as GMA1
+    interface " " as GMA1I
+
+    LBGM --( GMA1I
+    GMA1I -- GMA1
+
+    component "Email Handler A2" as GMA2
+    interface " " as GMA2I
+
+    LBGM --( GMA2I
+    GMA2I -- GMA2
+
+    GM --( DGMI
+    GMA1 --( DGMI
+    GMA2 --( DGMI
+
+    component "Load Balancer for Exchange Rate" as LBER
+    interface " " as LBERI
+
+    component "Directory for Exchange Rate" as DER
+    interface " " as DERI
+
+    TA --( LBERI
+    LBERI -- LBER
+
+    LBER --( DERI
+    DERI -- DER
+
+    LBER --( ERI
+    ERI -- ER
+
+    component "Exchange Rate A1" as ERA1
+    interface " " as ERA1I
+
+    LBER --( ERA1I
+    ERA1I -- ERA1
+
+    component "Exchange Rate A2" as ERA2
+    interface " " as ERA2I
+
+    LBER --( ERA2I
+    ERA2I -- ERA2
+
+    ER --( DERI
+    ERA1 --( DERI
+    ERA2 --( DERI
+
+    TA --( SCHI
+    SCHI -- SCH
+
+    TA --( DBI
+    DBI -- DB
+    
+    TA -( TPI
+    TPI - TP
+}
+
+API --( TAI 
+TAI -- TA
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Courier
+@enduml
+```
+
+#### Process view before Load Balancing
+```puml
+@startuml
+title "Many requests before Load Balancing" Process View
+
+participant "Trading Aggregator" as TA
+participant "Exchange Rate Default" as ERD
+
+
+TA -> ERD: first request
+TA -> ERD: second request
+TA -> ERD: third request
+ERD -> TA: response of first request
+ERD -> TA: response of second request
+ERD -> TA: response of third request
+
+@enduml
+```
+
+#### Process view with Load Balancing
+```puml
+@startuml
+title "Many requests with Load Balancing" Process View
+
+participant "Trading Aggregator" as TA
+participant "Load Balancer for Email" as LB
+participant "Directory for Exchange Rate" as D
+participant "Exchange Rate Default" as ERD
+participant "Exchange Rate A1" as ERA1
+participant "Exchange Rate A2" as ERA2
+
+ERD -> D: register
+ERA1 -> D: register
+ERA2 -> D: register
+TA -> LB: first request
+LB -> D: lookup first request
+D -> LB: select first available
+LB -> ERD: forward first request
+TA -> LB: second request
+LB -> D: lookup second request
+D -> LB: select first available
+LB -> ERA1: forward second request
+ERD -> TA: response of first request
+TA -> LB: third request
+LB -> D: lookup third request
+ERA1 -> TA: response of second request
+D -> LB: select first available
+LB -> ERD: forward third request
+ERD -> TA: response of third request
+
+@enduml
+```
+
+
+#### Deployment view before Load Balancing
+```puml
+@startuml
+skinparam componentStyle true
+
+!include <tupadr3/font-awesome/database>
+
+node "<<device>> :Application Server" as appnode {
+    node "<<executionenvironment>> :PythonVM" {
+        component "Schedule" as SCH
+        component "Graph visualization" as GV
+        component "Trading Aggregator" as TA
+    }
+}
+
+node "<<device>> :Web Server" as webnode{
+    component "Web API" as API
+}
+
+node "<<device>> :ClientPC" as usernode{
+    component "User Interface" as UI
+    node "<<executionenvironment>> :Browser" {
+    }
+}
+
+node "<<device>> :Database Server" as dbservernode{
+    component "MySQL Database <$database{scale=0.33}>" as DB
+}
+
+node "<<device>> :Exchange Rate Server" as exchangenode{
+    component "Exchange rate" as ER
+}
+
+node "<<device>> :Gmail Server" as gmailnode{
+    component "Gmail Handler" as GM
+}
+
+node "Trading platforms" as platformsnode{
+    node "<<device>> :Binance Server" {
+        component "Binance API" as BAPI
+    }
+    node "<<device>> :Coinbase Server" {
+        component "Coinbase API" as CAPI
+    }
+    node "<<device>> :Interactive Brokers Server" {
+        component "Interactive Brokers API" as IBAPI
+    }
+}
+
+appnode -- webnode : <<internet>>
+
+webnode -- usernode : <<internet>>
+
+appnode - platformsnode : <<HTTPS>>
+
+appnode --- gmailnode : <<IMAP>>
+
+appnode -- exchangenode : <<HTTPS>>
+
+appnode -- dbservernode : <<internet>>
+
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Courier
+@enduml
+```
+
+#### Deployment view with Load Balancing
+```puml
+@startuml
+skinparam componentStyle true
+
+!include <tupadr3/font-awesome/database>
+
+node "<<device>> :Application Server" as appnode {
+    node "<<executionenvironment>> :PythonVM" {
+        component "Schedule" as SCH
+        component "Graph visualization" as GV
+        component "Trading Aggregator" as TA
+    }
+}
+
+node "<<device>> :Web Server" as webnode{
+    component "Web API" as API
+}
+
+node "<<device>> :ClientPC" as usernode{
+    component "User Interface" as UI
+    node "<<executionenvironment>> :Browser" {
+    }
+}
+
+node "<<device>> :Database Server" as dbservernode{
+    component "MySQL Database <$database{scale=0.33}>" as DB
+}
+
+node "<<device>> :Exchange Rate Server" as exchangenode{
+    component "Exchange rate Default" as ER
+}
+
+node "<<device>> :Gmail Server" as gmailnode{
+    component "Gmail Handler Default" as GM
+}
+
+node "Trading platforms" as platformsnode{
+    node "<<device>> :Binance Server" {
+        component "Binance API" as BAPI
+    }
+    node "<<device>> :Coinbase Server" {
+        component "Coinbase API" as CAPI
+    }
+    node "<<device>> :Interactive Brokers Server" {
+        component "Interactive Brokers API" as IBAPI
+    }
+}
+
+node "Balancer for Gmail" as emailbalancer{
+    component "Load Balancer for Emails" as LBE
+    component "Directory for Emails" as DE
+}
+
+LBE - DE
+
+appnode --- emailbalancer
+
+node "Balancer for Exchange Rate" as exchangebalancer{
+    component "Load Balancer for Exchange Rate" as LBER
+    component "Directory for Exchange Rate" as DER
+}
+
+LBER - DER
+
+appnode -- exchangebalancer
+
+appnode -- webnode : <<internet>>
+
+webnode -- usernode : <<internet>>
+
+appnode - platformsnode : <<HTTPS>>
+
+emailbalancer --- gmailnode : <<IMAP>>
+
+node "<<device>> :Yahoo Server A1" as yahoonode{
+    component "Yahoo Handler A1" as YHA1
+}
+
+node "<<device>> :Email Server A2" as emailnode{
+    component "Email Handler A2" as EHA2
+}
+
+emailbalancer -- yahoonode: <<IMAP>>
+
+emailbalancer -- emailnode: <<IMAP>>
+
+exchangebalancer -- exchangenode : <<HTTPS>>
+
+node "<<device>> :Exchange Rate A1" as exchangea1node{
+    component "Exchange Rate A1" as ERA1
+}
+
+node "<<device>> :Exchange Rate A2" as exchangea2node{
+    component "Exchange Rate A2" as ERA2
+}
+
+exchangebalancer -- exchangea1node : <<HTTPS>>
+
+exchangebalancer -- exchangea2node : <<HTTPS>>
+
+appnode -- dbservernode : <<internet>>
+
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Courier
+@enduml
+```
+
+### 4. ADR for Load Balancer and Directory
+
+* What did you decide?
+    * Load Balancer and Directory
+    
+* What was the context for your decision?
+    * To use Load Balancer and Directory in case that my default component is overloaded by many requests.
+    In other words, in case of unavailability of my default component, the directory should use the first available component strategy. Consequently, the Load Balancer should forward the request to this component.
+    The Stateless variant for Load Balancing is used because every request goes to any external component which is available. However, if the default component is available, the request goes there.
+
+* What is the problem you are trying to solve?
+    * Default components are overloaded. Hence the request must be forwarded to alternative external components.
+
+* Which alternative options did you consider?
+    * Load Balancing
+    * Master/Worker - not possible to divide the requests -> no merge result needed
+    * Scatter/Gather - same request sent to different components
+
+* Which one did you choose?
+    * Load Balancing
+
+* What is the main reason for that?
+    * explained above
+
+
+### 5. ADR for dependency injection vs. directory
+
+* What did you decide?
+    * Using Directory for discovering the external components.
+    
+* What was the context for your decision?
+    * Before Load Balancer can forward the request to the first available component, Directory must find out this component actively. We are looking up the external active component.
+
+* What is the problem you are trying to solve?
+    * How to discover the external component.
+
+* Which alternative options did you consider?
+    * Dependency injection
+    * Directory
+
+* Which one did you choose?
+    * Directory
+
+* What is the main reason for that?
+    * We want to control what component we can select and we call - Not following the Hollywood principle: "Don't call us, we'll call you."
+    * Our motto: "We need you now, so we call you, now."
+
+
+## 2. scalability dimension
+### 1. Size of state
+
+### 2. How well does your architecture scale along the chosen dimension? Where do you expect the bottleneck to be?
+One database can reach full capacity in case of increase in number of users. In other words, it can be our bottleneck.
+
+### 3. Modify your architecture to remove the scalability bottleneck you have identified (show both logical, process and deployment view) - consider whether the API/interface of the bottleneck component should be improved.
+
+
+#### Logical view before Sharding
+
+```puml
+@startuml
+skinparam componentStyle true
+
+!include <tupadr3/font-awesome/database>
+
+title "TradAgg" Logical View
+interface " " as TAI
+
+component "User Interface" as UI
+component "Web API" as API
+interface " " as APII
+
+UI --( APII
+APII -- API
+
+component "BackEnd" as BE {
+    component "Trading Aggregator" as TA
+    interface " " as TAI
+
+    component "Schedule" as SCH
+    interface " " as SCHI
+
+    component "Graph visualization" as GV
+    interface " " as GVI
+
+    component "Database <$database{scale=0.33}>" as DB
+    interface " " as DBI
+
+    component "Exchange rate" as ER
+    interface " " as ERI
+
+    component "Gmail Handler" as GM
+    interface " " as GMI
+    
+    component "Trading platforms" as TP {
+        component "Coinbase API" as CAPI
+        interface " " as CAPII
+        CAPII - CAPI
+
+        component "Binance API" as BAPI
+        interface " " as BAPII
+        BAPI - BAPII
+ 
+        component "Interactive Brokers API" as IBAPI
+        interface " " as IBAPII
+        IBAPII - IBAPI
+    }
+    interface " " as TPI
+    
+    TA --( GVI
+    GVI -- GV
+
+    TA --( SCHI
+    SCHI -- SCH
+
+    TA --( DBI
+    DBI -- DB
+    
+    TA -( TPI
+    TPI - TP
+
+    TA --( ERI
+    ERI -- ER
+
+    TA --( GMI
+    GMI -- GM
+}
+
+API --( TAI 
+TAI -- TA
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Courier
+@enduml
+```
+
+#### Logical view with Sharding
+
+
+```puml
+@startuml
+skinparam componentStyle true
+
+!include <tupadr3/font-awesome/database>
+
+title "TradAgg" Logical View
+interface " " as TAI
+
+component "User Interface" as UI
+component "Web API" as API
+interface " " as APII
+
+UI --( APII
+APII -- API
+
+component "BackEnd" as BE {
+    component "Trading Aggregator" as TA
+    interface " " as TAI
+
+    component "Schedule" as SCH
+    interface " " as SCHI
+
+    component "Graph visualization" as GV
+    interface " " as GVI
+
+    component "Database Switzerland <$database{scale=0.33}>" as DB
+    interface " " as DBI
+
+    component "Exchange rate" as ER
+    interface " " as ERI
+
+    component "Gmail Handler" as GM
+    interface " " as GMI
+    
+    component "Trading platforms" as TP {
+        component "Coinbase API" as CAPI
+        interface " " as CAPII
+        CAPII - CAPI
+
+        component "Binance API" as BAPI
+        interface " " as BAPII
+        BAPI - BAPII
+ 
+        component "Interactive Brokers API" as IBAPI
+        interface " " as IBAPII
+        IBAPII - IBAPI
+    }
+    interface " " as TPI
+    
+    component "Query Router" as QR
+    interface " " as QRI
+
+    TA --( QRI
+    QRI -- QR
+
+    QR --( DBI
+    DBI -- DB
+
+    component "Database Germany <$database{scale=0.33}>" as DBG
+    interface " " as DBGI
+
+    QR --( DBGI
+    DBGI -- DBG
+
+    component "Database Austria <$database{scale=0.33}>" as DBA
+    interface " " as DBAI
+
+    QR --( DBAI
+    DBAI -- DBA
+
+    component "Shared Database <$database{scale=0.33}>" as DBS
+    interface " " as DBSI
+
+    component "Directory for Shard Key" as DforS
+    interface " " as DforSI
+
+    QR --( DforSI
+    DforSI -- DforS
+
+    DBG --( DforSI
+    DBA --( DforSI
+    DB --( DforSI
+
+
+
+    QR --( DBSI
+    DBSI -- DBS  
+
+    TA --( GVI
+    GVI -- GV
+
+    TA --( SCHI
+    SCHI -- SCH
+   
+    TA -( TPI
+    TPI - TP
+
+    TA --( ERI
+    ERI -- ER
+
+    TA --( GMI
+    GMI -- GM
+}
+
+API --( TAI 
+TAI -- TA
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Courier
+@enduml
+```
+
+#### Process view before Sharding
+```puml
+@startuml
+title "Size of state before Sharding" Process View
+
+participant "Trading Aggregator" as TA
+participant "Database" as D
+
+
+TA -> D: first query
+D -> TA: response of first query
+TA -> D: second query
+D -> TA: response of second query
+TA -> D: third query
+D -> TA: response of third query
+
+@enduml
+```
+
+#### Process view with Sharding
+```puml
+@startuml
+title "Size of state with Sharding" Process View
+
+participant "Trading Aggregator" as TA
+participant "Query Router" as QR
+participant "Directory for Shards" as DforS
+participant "Database Germany" as DG
+participant "Database Switzerland" as DS
+participant "Database Austria" as DA
+participant "Database Shared" as DSH
+
+DG -> DforS: register
+DS -> DforS: register
+DA -> DforS: register
+TA -> QR: first query
+QR -> DforS: lookup shard key
+DforS -> QR: shard key based on country provided
+QR -> DS: first query
+QR -> DSH: first query
+DS -> QR: response of first query
+DSH -> QR: response of first query
+QR -> TA: provide result
+TA -> QR: second query
+QR -> DforS: lookup shard key
+DforS -> QR: shard key based on country provided
+QR -> DA: second query
+QR -> DSH: second query
+DA -> QR: response of second query
+DSH -> QR: response of second query
+QR -> TA: provide result
+TA -> QR: third query
+QR -> DforS: lookup shard key
+DforS -> QR: shard key based on country provided
+QR -> DG: third query
+QR -> DSH: third query
+DG -> QR: response of third query
+DSH -> QR: response of third query
+QR -> TA: provide result
+
+@enduml
+```
+
+#### Deployment view before Sharding
+```puml
+@startuml
+skinparam componentStyle true
+
+!include <tupadr3/font-awesome/database>
+
+node "<<device>> :Application Server" as appnode {
+    node "<<executionenvironment>> :PythonVM" {
+        component "Schedule" as SCH
+        component "Graph visualization" as GV
+        component "Trading Aggregator" as TA
+    }
+}
+
+node "<<device>> :Web Server" as webnode{
+    component "Web API" as API
+}
+
+node "<<device>> :ClientPC" as usernode{
+    node "<<executionenvironment>> :Browser" {
+        component "User Interface" as UI
+    }
+}
+
+node "<<device>> :Database Server" as dbservernode{
+    component "MySQL Database <$database{scale=0.33}>" as DB
+}
+
+node "<<device>> :Exchange Rate Server" as exchangenode{
+    component "Exchange rate" as ER
+}
+
+node "<<device>> :Gmail Server" as gmailnode{
+    component "Gmail Handler" as GM
+}
+
+node "Trading platforms" as platformsnode{
+    node "<<device>> :Binance Server" {
+        component "Binance API" as BAPI
+    }
+    node "<<device>> :Coinbase Server" {
+        component "Coinbase API" as CAPI
+    }
+    node "<<device>> :Interactive Brokers Server" {
+        component "Interactive Brokers API" as IBAPI
+    }
+}
+
+appnode -- webnode : <<internet>>
+
+webnode -- usernode : <<internet>>
+
+appnode - platformsnode : <<HTTPS>>
+
+appnode --- gmailnode : <<IMAP>>
+
+appnode -- exchangenode : <<HTTPS>>
+
+appnode -- dbservernode : <<internet>>
+
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Courier
+@enduml
+```
+
+#### Deployment view with Sharding
+```puml
+@startuml
+skinparam componentStyle true
+
+!include <tupadr3/font-awesome/database>
+
+node "<<device>> :Application Server" as appnode {
+    node "<<executionenvironment>> :PythonVM" {
+        component "Schedule" as SCH
+        component "Graph visualization" as GV
+        component "Trading Aggregator" as TA
+    }
+}
+
+node "<<device>> :Web Server" as webnode{
+    component "Web API" as API
+}
+
+node "<<device>> :ClientPC" as usernode{
+    node "<<executionenvironment>> :Browser" {
+        component "User Interface" as UI
+    }
+}
+
+cloud "Amazon Web Services (AWS)"{
+    node "Sharding" as shardnode{
+        component "Query Router" as QR
+        component "Directory for shards" as DforS
+    }
+
+    component "MySQL Database Switzerland<$database{scale=0.33}>" as DS
+    component "MySQL Database Austria<$database{scale=0.33}>" as DA
+    component "MySQL Database Germany <$database{scale=0.33}>" as DG
+    component "MySQL Database Shared <$database{scale=0.33}>" as DSH
+}
+
+QR - DforS
+
+shardnode -- DS
+shardnode -- DSH
+shardnode -- DA
+shardnode -- DG
+
+appnode -- shardnode
+
+
+node "<<device>> :Exchange Rate Server" as exchangenode{
+    component "Exchange rate" as ER
+}
+
+node "<<device>> :Gmail Server" as gmailnode{
+    component "Gmail Handler" as GM
+}
+
+node "Trading platforms" as platformsnode{
+    node "<<device>> :Binance Server" {
+        component "Binance API" as BAPI
+    }
+    node "<<device>> :Coinbase Server" {
+        component "Coinbase API" as CAPI
+    }
+    node "<<device>> :Interactive Brokers Server" {
+        component "Interactive Brokers API" as IBAPI
+    }
+}
+
+appnode -- webnode : <<internet>>
+
+webnode -- usernode : <<internet>>
+
+appnode - platformsnode : <<HTTPS>>
+
+appnode --- gmailnode : <<IMAP>>
+
+appnode -- exchangenode : <<HTTPS>>
+
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Courier
+@enduml
+```
+
+### 4. ADR for Sharding and Directory
+
+* What did you decide?
+    * Sharding the data based on the country with Directory which is responsible for providing the appropriate shard key.
+    
+* What was the context for your decision?
+    * To use Sharding and Directory in case that capacity of my single MySQL Database is full.
+    In other words, a query will be sent to appropriate database based on the shard key. Shard key will be provided by Directory for Shards which is based on countries. After the Query Router knows the shard key, the query is sent to the country database.
+
+* What is the problem you are trying to solve?
+    * My single MySQL database reaches the capacity. Hence, I need more capacity. The question is how can I go beyond my current capacity.
+
+* Which alternative options did you consider?
+    * Sharding
+
+* Which one did you choose?
+    * Sharding
+
+* What is the main reason for that?
+    * explained above
+
+
+### 5. ADR for dependency injection vs. directory
+
+* What did you decide?
+    * Using Directory for providing the country shard key.
+    
+* What was the context for your decision?
+    * Before Query Router can send a query to the appropriate database, Directory must find out the shard key based on the counry actively. We are looking up the country shard key.
+
+* What is the problem you are trying to solve?
+    * How to discover the country shard key.
+
+* Which alternative options did you consider?
+    * Dependency injection
+    * Directory
+
+* Which one did you choose?
+    * Directory
+
+* What is the main reason for that?
+    * We want to control what database we can select and we send a query - Not following the Hollywood principle: "Don't call us, we'll call you."
+    * Our motto: "We need you now, so we call you, now."
+
+
 # Ex - Flexibility
 
 {.instructions
