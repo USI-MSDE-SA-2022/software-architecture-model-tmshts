@@ -2867,10 +2867,6 @@ component "BackEnd" as BE {
 
     LBGV --( GVA2I
     GVA2I -- GVA2
-    
-    GV --( DGVI
-    GVA1 --( DGVI
-    GVA2 --( DGVI    
 
     component "Load Balancer for Email" as LBGM
     interface " " as LBGMI
@@ -2899,10 +2895,6 @@ component "BackEnd" as BE {
     LBGM --( GMA2I
     GMA2I -- GMA2
 
-    GM --( DGMI
-    GMA1 --( DGMI
-    GMA2 --( DGMI
-
     component "Load Balancer for Exchange Rate" as LBER
     interface " " as LBERI
 
@@ -2929,10 +2921,6 @@ component "BackEnd" as BE {
 
     LBER --( ERA2I
     ERA2I -- ERA2
-
-    ER --( DERI
-    ERA1 --( DERI
-    ERA2 --( DERI
 
     TA --( SCHI
     SCHI -- SCH
@@ -2984,9 +2972,6 @@ participant "Exchange Rate Default" as ERD
 participant "Exchange Rate A1" as ERA1
 participant "Exchange Rate A2" as ERA2
 
-ERD -> D: register
-ERA1 -> D: register
-ERA2 -> D: register
 TA -> LB: first request
 LB -> D: lookup first request
 D -> LB: select first available
@@ -3194,6 +3179,7 @@ skinparam defaultFontName Courier
     * To use Load Balancer and Directory in case that my default component is overloaded by many requests.
     In other words, in case of unavailability of my default component, the directory should use the first available component strategy. Consequently, the Load Balancer should forward the request to this component.
     The Stateless variant for Load Balancing is used because every request goes to any external component which is available. However, if the default component is available, the request goes there.
+    Since we are dependent on external components, we can not force them to register in our Directory :) Therefore, we have to hard code them in our Directory. There is no Registry step between external components and Directory.
 
 * What is the problem you are trying to solve?
     * Default components are overloaded. Hence the request must be forwarded to alternative external components.
@@ -3216,7 +3202,8 @@ skinparam defaultFontName Courier
     * Using Directory for discovering the external components.
     
 * What was the context for your decision?
-    * Before Load Balancer can forward the request to the first available component, Directory must find out this component actively. We are looking up the external active component.
+    * Before Load Balancer can forward the request to the first available component, Directory must find out this component actively. We are looking up the external active component. 
+    Since we are dependent on external components, we can not force them to register in our Directory :) Therefore, we have to hard code them in our Directory. There is no Registry step between external components and Directory.
 
 * What is the problem you are trying to solve?
     * How to discover the external component.
