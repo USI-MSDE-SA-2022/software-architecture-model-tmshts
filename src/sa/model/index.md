@@ -3709,3 +3709,631 @@ Good: 1, two out of 2-5.
 Exceed: 1-5.
 
 }
+
+## 1. Pick a new use case scenario. Precisely, what exactly do you need to change of your existing architecture so that it can be supported? Model the updated logical/process/deployment views.
+## 1. Use case - Logical / Process / Deployment view
+Client wishes to give users a new feature to the TradAgg app which is Bloomberg news.
+Solution: Bloomberg news API based on REST architecture with request format: JSON.
+On the user interface would be seen a tab named Bloomberg News where will be listed the daily news.
+
+### Logical view with Bloomberg News
+
+```puml
+@startuml
+skinparam componentStyle true
+
+!include <tupadr3/font-awesome/database>
+
+title "TradAgg" Logical View
+interface " " as TAI
+
+component "User Interface" as UI
+component "Web API" as API
+interface " " as APII
+
+UI --( APII
+APII -- API
+
+component "BackEnd" as BE {
+    component "Trading Aggregator" as TA
+    interface " " as TAI
+
+    component "Schedule" as SCH
+    interface " " as SCHI
+
+    component "Graph visualization" as GV
+    interface " " as GVI
+
+    component "Database <$database{scale=0.33}>" as DB
+    interface " " as DBI
+
+    component "Exchange rate" as ER
+    interface " " as ERI
+
+    component "Gmail Handler" as GM
+    interface " " as GMI
+
+    component "Bloomberg News" as BN
+    interface " " as BNI
+    
+    component "Trading platforms" as TP {
+        component "Coinbase API" as CAPI
+        interface " " as CAPII
+        CAPII - CAPI
+
+        component "Binance API" as BAPI
+        interface " " as BAPII
+        BAPI - BAPII
+ 
+        component "Interactive Brokers API" as IBAPI
+        interface " " as IBAPII
+        IBAPII - IBAPI
+    }
+    interface " " as TPI
+    
+    BNI )- TA
+    BN - BNI
+
+    TA --( GVI
+    GVI -- GV
+
+    TA --( SCHI
+    SCHI -- SCH
+
+    TA --( DBI
+    DBI -- DB
+    
+    TA -( TPI
+    TPI - TP
+
+    TA --( ERI
+    ERI -- ER
+
+    TA --( GMI
+    GMI -- GM
+}
+
+API --( TAI 
+TAI -- TA
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Courier
+@enduml
+```
+
+## Process view with Bloomberg News
+```puml
+@startuml
+title "Reading Bloomberg News" Process View
+
+participant "User" as U
+participant "User Interface" as UI
+participant "Trading Aggregator" as TA
+participant "Bus" as BUS
+participant "Bloomberg News" as BN
+
+TA -> BUS: subscribe
+BN -> BUS: publish
+BUS -> TA: notify
+TA -> UI: provide news
+U -> UI: read news
+
+
+@enduml
+```
+
+#### Deployment view with Bloomberg News
+```puml
+@startuml
+skinparam componentStyle true
+
+!include <tupadr3/font-awesome/database>
+
+cloud "Cloud"{
+        node "<<executionenvironment>> :PythonVM" as appnode {
+        component "Schedule" as SCH
+        component "Graph visualization" as GV
+        component "Trading Aggregator" as TA
+    }
+}
+
+node "<<device>> :Web Server" as webnode{
+    component "Web API" as API
+}
+
+node "<<device>> :ClientPC" as usernode{
+    node "<<executionenvironment>> :Browser" {
+        component "User Interface" as UI
+    }
+}
+
+node "<<device>> :Database Server" as dbservernode{
+    component "MySQL Database <$database{scale=0.33}>" as DB
+}
+
+node "<<device>> :Exchange Rate Server" as exchangenode{
+    component "Exchange rate" as ER
+}
+
+node "<<device>> :Gmail Server" as gmailnode{
+    component "Gmail Handler" as GM
+}
+
+node "Trading platforms" as platformsnode{
+    node "<<device>> :Binance Server" {
+        component "Binance API" as BAPI
+    }
+    node "<<device>> :Coinbase Server" {
+        component "Coinbase API" as CAPI
+    }
+    node "<<device>> :Interactive Brokers Server" {
+        component "Interactive Brokers API" as IBAPI
+    }
+}
+
+node "<<device>> :Bloomberg Server" as bloombergnode{
+    component "Bloomberg News" as BN
+}
+
+bloombergnode - appnode : <<HTTPS>>
+
+appnode -- webnode : <<internet>>
+
+webnode -- usernode : <<internet>>
+
+appnode - platformsnode : <<HTTPS>>
+
+appnode --- gmailnode : <<IMAP>>
+
+appnode -- exchangenode : <<HTTPS>>
+
+appnode -- dbservernode : <<internet>>
+
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Courier
+@enduml
+```
+
+## 2. Pick another use case scenario so that it can be supported without any major architectural change (i.e., while you cannot add new components, it is possible to extend the interface of existing ones or introduce new dependencies). Illustrate with a process view, how your previous design can satisfy the new requirement.
+
+User is able to export the data of his wished timeframe in CSV format. Therefore, we have to add a new component that is responsible for transforming data into CSV format. Later, we use this component as extensible component where a client can plugin component.
+After exporting the data in CSV file, a client can analyze his portfolio into more depth.
+
+## 2. Use case - export the data in csv format - Process view
+
+```puml
+@startuml
+title "Exporting data in CSV file" Process View
+
+participant "User Desktop" as UD
+participant "User Interface" as UI
+participant "Export Converter (default CSV)" as EC
+participant "Trading Aggregator" as TA
+participant "Database" as D
+
+UI -> TA: select_timeframe()
+TA -> TA: prepare_sql_query()
+TA -> D: cursor.execute(sql_query)
+D -> TA: cursor.fetchall()
+TA -> EC: send_data()
+EC -> EC: convert_data()
+EC -> TA: forward_data()
+TA -> UI: data_provided_in_CSV_format()
+UI -> UD: data_exported_in_CSV_file
+
+@enduml
+```
+
+## 3. Change impact. One of your externally sourced component/Web service API has announced it will introduce a breaking change. What is the impact of such change? How can you control and limit the impact of such change? Update your logical view
+
+Breaking change of one of our external component will no big impact on our software architecture. The only thing which we have to change is the code in Trading Aggregator. Other components should not be affected. This is a great news that a change of one external component will only affect our one component - controller. We will have enough time to modify the source code based on the change of the external component.
+
+In case of change of request format - JSON in Trading platforms, we can not change for another Trading platform. Hence, we would have to use adapter.
+
+If Schedule does not support Python anymore, we could look up for an alternative external component supporting Python or use Adapter.
+
+In terms of Graph visualization, plotly is library in Python. In case of some dramatical change, we would consider to look up another graph provider.
+
+In case of change of request format - JSON in Exchange rate, we would choose another free external component supporting json format or use adapter.
+
+In case of some dramatical change in Gmail, we would consider to look up another email provider.
+
+
+### Logical view
+
+```puml
+@startuml
+skinparam componentStyle true
+
+!include <tupadr3/font-awesome/database>
+
+title "TradAgg" Logical View
+interface " " as TAI
+
+component "User Interface" as UI
+component "Web API" as API
+interface " " as APII
+
+UI --( APII
+APII -- API
+
+component "BackEnd" as BE {
+    component "Trading Aggregator" as TA
+    interface " " as TAI
+
+    component "Schedule" as SCH
+    interface " " as SCHI
+
+    component "Graph visualization" as GV
+    interface " " as GVI
+
+    component "Database <$database{scale=0.33}>" as DB
+    interface " " as DBI
+
+    component "Exchange rate" as ER
+    interface " " as ERI
+
+    component "Gmail Handler" as GM
+    interface " " as GMI
+
+    component "Bloomberg News" as BN
+    interface " " as BNI
+    
+    component "Trading platforms" as TP {
+        component "Coinbase API" as CAPI
+        interface " " as CAPII
+        CAPII - CAPI
+
+        component "Binance API" as BAPI
+        interface " " as BAPII
+        BAPI - BAPII
+ 
+        component "Interactive Brokers API" as IBAPI
+        interface " " as IBAPII
+        IBAPII - IBAPI
+    }
+    interface " " as TPI
+    
+    BNI )- TA
+    BN - BNI
+
+    TA --( GVI
+    GVI -- GV
+
+    TA --( SCHI
+    SCHI -- SCH
+
+    TA --( DBI
+    DBI -- DB
+    
+    TA -( TPI
+    TPI - TP
+
+    TA --( ERI
+    ERI -- ER
+
+    TA --( GMI
+    GMI -- GM
+}
+
+API --( TAI 
+TAI -- TA
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Courier
+@enduml
+```
+
+## 4. Open up your architecture so that it can be extended with plugins by its end-users. Where would be a good extension point? Update your logical view and give at least one example of what a plugin would actually do.
+
+
+In the 2nd use case I added another component named Export Converter. This component is used as extensible component. Originally, it only converted into CSV file and then this CSV file was exported to the User Interface.
+
+Now, a plugin component can be added to the extensible component thanks to the extension point. The following plugin component is fully compatible with the extension point.
+
+The plugin can do following: export data in many possible formats such as CSV, JSON and Excel (xls).
+
+### Logical view
+
+```puml
+@startuml
+skinparam componentStyle true
+
+!include <tupadr3/font-awesome/database>
+
+title "TradAgg" Logical View
+interface " " as TAI
+
+component "User Interface" as UI
+component "Web API" as API
+interface " " as APII
+
+UI --( APII
+APII -- API
+
+component "BackEnd" as BE {
+    component "Trading Aggregator" as TA
+    interface " " as TAI
+
+    component "Schedule" as SCH
+    interface " " as SCHI
+
+    component "Graph visualization" as GV
+    interface " " as GVI
+
+    component "Database <$database{scale=0.33}>" as DB
+    interface " " as DBI
+
+    component "Exchange rate" as ER
+    interface " " as ERI
+
+    component "Gmail Handler" as GM
+    interface " " as GMI
+
+    component "Export Converter (default CSV)" as EC
+    interface " " as ECI
+
+    component "Plugin Converter" as PC
+    interface " " as PCI
+    
+    component "Trading platforms" as TP {
+        component "Coinbase API" as CAPI
+        interface " " as CAPII
+        CAPII - CAPI
+
+        component "Binance API" as BAPI
+        interface " " as BAPII
+        BAPI - BAPII
+ 
+        component "Interactive Brokers API" as IBAPI
+        interface " " as IBAPII
+        IBAPII - IBAPI
+    }
+    interface " " as TPI
+
+    PC -( PCI
+    PCI - EC
+    
+    ECI )- TA
+    EC - ECI
+
+    TA --( GVI
+    GVI -- GV
+
+    TA --( SCHI
+    SCHI -- SCH
+
+    TA --( DBI
+    DBI -- DB
+    
+    TA -( TPI
+    TPI - TP
+
+    TA --( ERI
+    ERI -- ER
+
+    TA --( GMI
+    GMI -- GM
+}
+
+API --( TAI 
+TAI -- TA
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Courier
+@enduml
+```
+
+## 5. Assuming you have a centralized deployment with all stateful components storing their state in the same database, propose a strategy to split the monolith into at least two different microservices. Model the new logical/deployment view as well as the interfaces of each microservice you introduce.
+
+We made a decision to have Microservice for Clients and Microservice for Trades. Each Microservices has own database. Microservices communicates with our controller Trading Aggregator.
+
+Each Microservice runs in Container and the Container is located in Cloud. Containers communicates with Trading Aggregator via HTTPS.
+
+The rest of software architecture remains untouched.
+
+### Logical view
+
+```puml
+@startuml
+skinparam componentStyle true
+
+!include <tupadr3/font-awesome/database>
+
+title "TradAgg" Logical View
+interface " " as TAI
+
+component "User Interface" as UI
+component "Web API" as API
+interface " " as APII
+
+UI --( APII
+APII -- API
+
+component "BackEnd" as BE {
+    component "Trading Aggregator" as TA
+    interface " " as TAI
+
+    component "Schedule" as SCH
+    interface " " as SCHI
+
+    component "Graph visualization" as GV
+    interface " " as GVI
+
+    component "Database <$database{scale=0.33}>" as DB
+    interface " " as DBI
+
+    component "Exchange rate" as ER
+    interface " " as ERI
+
+    component "Gmail Handler" as GM
+    interface " " as GMI
+  
+    component "Trading platforms" as TP {
+        component "Coinbase API" as CAPI
+        interface " " as CAPII
+        CAPII - CAPI
+
+        component "Binance API" as BAPI
+        interface " " as BAPII
+        BAPI - BAPII
+ 
+        component "Interactive Brokers API" as IBAPI
+        interface " " as IBAPII
+        IBAPII - IBAPI
+    }
+
+    interface " " as TPI
+    
+    TA --( GVI
+    GVI -- GV
+
+    TA --( SCHI
+    SCHI -- SCH
+
+    TA --( DBI
+    DBI -- DB
+    
+    TA -( TPI
+    TPI - TP
+
+    TA --( ERI
+    ERI -- ER
+
+    TA --( GMI
+    GMI -- GM
+}
+
+    rectangle "Microservice Clients" as MN {
+            component "Clients" as clients
+            database "Database Clients <$database{scale=0.33}>" as DBC
+        }
+    interface " " as MNI
+
+    MNI - MN
+    TA -( MNI
+
+    clients --> DBC
+    DBC --> clients
+
+    rectangle "Microservice Trades" as MT {
+        component "Trades" as trades
+        database "Database Trades <$database{scale=0.33}>" as DBT
+        }
+    interface " " as MTI
+
+    MTI - MT
+    TA -( MTI
+
+    trades --> DBT
+    DBT --> trades
+
+
+
+API --( TAI 
+TAI -- TA
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Courier
+@enduml
+```
+
+#### Deployment view
+```puml
+@startuml
+skinparam componentStyle true
+
+!include <tupadr3/font-awesome/database>
+
+cloud "Cloud"{
+        node "<<executionenvironment>> :PythonVM" as appnode {
+        component "Schedule" as SCH
+        component "Graph visualization" as GV
+        component "Trading Aggregator" as TA
+    }
+}
+
+node "<<device>> :Web Server" as webnode{
+    component "Web API" as API
+}
+
+node "<<device>> :ClientPC" as usernode{
+    node "<<executionenvironment>> :Browser" {
+        component "User Interface" as UI
+    }
+}
+
+node "<<device>> :Database Server" as dbservernode{
+    component "MySQL Database <$database{scale=0.33}>" as DB
+}
+
+node "<<device>> :Exchange Rate Server" as exchangenode{
+    component "Exchange rate" as ER
+}
+
+node "<<device>> :Gmail Server" as gmailnode{
+    component "Gmail Handler" as GM
+}
+
+node "Trading platforms" as platformsnode{
+    node "<<device>> :Binance Server" {
+        component "Binance API" as BAPI
+    }
+    node "<<device>> :Coinbase Server" {
+        component "Coinbase API" as CAPI
+    }
+    node "<<device>> :Interactive Brokers Server" {
+        component "Interactive Brokers API" as IBAPI
+    }
+}
+
+cloud "Cloud" as cloudclients {
+    rectangle "Container - Microservice Clients" as containerclients {
+        node "<<executionenvironment>>: Python" as pythonclients {
+            component "Clients" as clients
+            }
+        component "Database Clients <$database{scale=0.33}>" as DBC
+    }
+}
+
+cloud "Cloud" as cloudtrades {
+    rectangle "Container - Microservice Trades" as containertrades {
+        node "<<executionenvironment>>: Python" as pythontrades {
+            component "Trades" as trades
+            }
+        component "Database Trades <$database{scale=0.33}>" as DBT
+    }
+}
+
+trades -- DBT : <<internet>>
+
+clients -- DBC : <<internet>>
+
+containerclients -- appnode : <<HTTPS>>
+
+containertrades - appnode : <<HTTPS>>
+
+appnode -- webnode : <<internet>>
+
+webnode -- usernode : <<internet>>
+
+appnode - platformsnode : <<HTTPS>>
+
+appnode --- gmailnode : <<IMAP>>
+
+appnode -- exchangenode : <<HTTPS>>
+
+appnode -- dbservernode : <<internet>>
+
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Courier
+@enduml
+```
