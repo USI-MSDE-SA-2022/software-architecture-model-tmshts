@@ -3801,7 +3801,11 @@ skinparam shadowing false
 skinparam defaultFontName Courier
 @enduml
 ```
+{.feedback
 
+    Is the "Bloomberg News" a backend sub-component or an external one?
+
+}
 ## Process view with Bloomberg News
 ```puml
 @startuml
@@ -4128,7 +4132,11 @@ skinparam shadowing false
 skinparam defaultFontName Courier
 @enduml
 ```
+{.feedback
 
+    - I guess "Trading Platforms" should not reside inside the backend box. Is it right? 
+
+}
 ## 5. Assuming you have a centralized deployment with all stateful components storing their state in the same database, propose a strategy to split the monolith into at least two different microservices. Model the new logical/deployment view as well as the interfaces of each microservice you introduce.
 
 We made a decision to have Microservice for Clients and Microservice for Trades. Each Microservices has own database. Microservices communicates with our controller Trading Aggregator.
