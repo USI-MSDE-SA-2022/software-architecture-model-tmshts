@@ -3746,33 +3746,8 @@ component "BackEnd" as BE {
 
     component "Database <$database{scale=0.33}>" as DB
     interface " " as DBI
-
-    component "Exchange rate" as ER
-    interface " " as ERI
-
-    component "Gmail Handler" as GM
-    interface " " as GMI
-
-    component "Bloomberg News" as BN
-    interface " " as BNI
-    
-    component "Trading platforms" as TP {
-        component "Coinbase API" as CAPI
-        interface " " as CAPII
-        CAPII - CAPI
-
-        component "Binance API" as BAPI
-        interface " " as BAPII
-        BAPI - BAPII
- 
-        component "Interactive Brokers API" as IBAPI
-        interface " " as IBAPII
-        IBAPII - IBAPI
-    }
+   
     interface " " as TPI
-    
-    BNI )- TA
-    BN - BNI
 
     TA --( GVI
     GVI -- GV
@@ -3785,13 +3760,40 @@ component "BackEnd" as BE {
     
     TA -( TPI
     TPI - TP
-
-    TA --( ERI
-    ERI -- ER
-
-    TA --( GMI
-    GMI -- GM
 }
+
+
+component "Bloomberg News" as BN
+interface " " as BNI
+
+component "Trading platforms" as TP {
+    component "Coinbase API" as CAPI
+    interface " " as CAPII
+    CAPII - CAPI
+
+    component "Binance API" as BAPI
+    interface " " as BAPII
+    BAPI - BAPII
+
+    component "Interactive Brokers API" as IBAPI
+    interface " " as IBAPII
+    IBAPII - IBAPI
+}
+
+component "Exchange rate" as ER
+interface " " as ERI
+
+component "Gmail Handler" as GM
+interface " " as GMI
+
+TA --( ERI
+ERI -- ER
+
+TA --( GMI
+GMI -- GM
+
+BNI )- TA
+BN - BNI
 
 API --( TAI 
 TAI -- TA
@@ -3806,6 +3808,9 @@ skinparam defaultFontName Courier
     Is the "Bloomberg News" a backend sub-component or an external one?
 
 }
+
+External component
+
 ## Process view with Bloomberg News
 ```puml
 @startuml
@@ -3977,32 +3982,7 @@ component "BackEnd" as BE {
     component "Database <$database{scale=0.33}>" as DB
     interface " " as DBI
 
-    component "Exchange rate" as ER
-    interface " " as ERI
-
-    component "Gmail Handler" as GM
-    interface " " as GMI
-
-    component "Bloomberg News" as BN
-    interface " " as BNI
-    
-    component "Trading platforms" as TP {
-        component "Coinbase API" as CAPI
-        interface " " as CAPII
-        CAPII - CAPI
-
-        component "Binance API" as BAPI
-        interface " " as BAPII
-        BAPI - BAPII
- 
-        component "Interactive Brokers API" as IBAPI
-        interface " " as IBAPII
-        IBAPII - IBAPI
-    }
     interface " " as TPI
-    
-    BNI )- TA
-    BN - BNI
 
     TA --( GVI
     GVI -- GV
@@ -4012,16 +3992,42 @@ component "BackEnd" as BE {
 
     TA --( DBI
     DBI -- DB
-    
-    TA -( TPI
-    TPI - TP
-
-    TA --( ERI
-    ERI -- ER
-
-    TA --( GMI
-    GMI -- GM
 }
+
+component "Exchange rate" as ER
+interface " " as ERI
+
+component "Gmail Handler" as GM
+interface " " as GMI
+
+component "Bloomberg News" as BN
+interface " " as BNI
+
+component "Trading platforms" as TP {
+    component "Coinbase API" as CAPI
+    interface " " as CAPII
+    CAPII - CAPI
+
+    component "Binance API" as BAPI
+    interface " " as BAPII
+    BAPI - BAPII
+
+    component "Interactive Brokers API" as IBAPI
+    interface " " as IBAPII
+    IBAPII - IBAPI
+}
+  
+BNI )- TA
+BN - BNI
+
+TA --( ERI
+ERI -- ER
+
+TA --( GMI
+GMI -- GM
+
+TPI )- TA
+TP - TPI
 
 API --( TAI 
 TAI -- TA
@@ -4072,33 +4078,16 @@ component "BackEnd" as BE {
     component "Database <$database{scale=0.33}>" as DB
     interface " " as DBI
 
-    component "Exchange rate" as ER
-    interface " " as ERI
 
-    component "Gmail Handler" as GM
-    interface " " as GMI
 
     component "Export Converter (default CSV)" as EC
     interface " " as ECI
 
     component "Plugin Converter" as PC
     interface " " as PCI
-    
-    component "Trading platforms" as TP {
-        component "Coinbase API" as CAPI
-        interface " " as CAPII
-        CAPII - CAPI
 
-        component "Binance API" as BAPI
-        interface " " as BAPII
-        BAPI - BAPII
- 
-        component "Interactive Brokers API" as IBAPI
-        interface " " as IBAPII
-        IBAPII - IBAPI
-    }
     interface " " as TPI
-
+    
     PC -( PCI
     PCI - EC
     
@@ -4117,12 +4106,33 @@ component "BackEnd" as BE {
     TA -( TPI
     TPI - TP
 
-    TA --( ERI
-    ERI -- ER
-
-    TA --( GMI
-    GMI -- GM
 }
+
+component "Trading platforms" as TP {
+    component "Coinbase API" as CAPI
+    interface " " as CAPII
+    CAPII - CAPI
+
+    component "Binance API" as BAPI
+    interface " " as BAPII
+    BAPI - BAPII
+
+    component "Interactive Brokers API" as IBAPI
+    interface " " as IBAPII
+    IBAPII - IBAPI
+}
+
+component "Gmail Handler" as GM
+interface " " as GMI
+
+component "Exchange rate" as ER
+interface " " as ERI
+
+TA --( ERI
+ERI -- ER
+
+TA --( GMI
+GMI -- GM
 
 API --( TAI 
 TAI -- TA
@@ -4137,13 +4147,21 @@ skinparam defaultFontName Courier
     - I guess "Trading Platforms" should not reside inside the backend box. Is it right? 
 
 }
+
+Yes, you are right.
+
 ## 5. Assuming you have a centralized deployment with all stateful components storing their state in the same database, propose a strategy to split the monolith into at least two different microservices. Model the new logical/deployment view as well as the interfaces of each microservice you introduce.
 
-We made a decision to have Microservice for Clients and Microservice for Trades. Each Microservices has own database. Microservices communicates with our controller Trading Aggregator.
+We made a decision to have Microservice for each Trading Platforms. The reason is that our controller Trading Aggregator may not handle the huge code in the future or we just want to have tidiness in our code. Hence, we apply "divide and conquer" strategy.
+
+Each Microservices has own database. Microservices communicates with our controller Trading Aggregator.
 
 Each Microservice runs in Container and the Container is located in Cloud. Containers communicates with Trading Aggregator via HTTPS.
 
 The rest of software architecture remains untouched.
+
+Again, for simplification I only use 3 Trading Platforms. But there will be more Trading Platforms.
+
 
 ### Logical view
 
@@ -4176,6 +4194,19 @@ component "BackEnd" as BE {
     component "Database <$database{scale=0.33}>" as DB
     interface " " as DBI
 
+    interface " " as TPI
+    
+    TA --( GVI
+    GVI -- GV
+
+    TA --( SCHI
+    SCHI -- SCH
+
+    TA --( DBI
+    DBI -- DB
+    
+}
+
     component "Exchange rate" as ER
     interface " " as ERI
 
@@ -4196,17 +4227,6 @@ component "BackEnd" as BE {
         IBAPII - IBAPI
     }
 
-    interface " " as TPI
-    
-    TA --( GVI
-    GVI -- GV
-
-    TA --( SCHI
-    SCHI -- SCH
-
-    TA --( DBI
-    DBI -- DB
-    
     TA -( TPI
     TPI - TP
 
@@ -4215,32 +4235,42 @@ component "BackEnd" as BE {
 
     TA --( GMI
     GMI -- GM
-}
 
-    rectangle "Microservice Clients" as MN {
-            component "Clients" as clients
-            database "Database Clients <$database{scale=0.33}>" as DBC
+    rectangle "Microservice Binance" as MB {
+            component "Binance Handler" as binance
+            database "Database Binance <$database{scale=0.33}>" as DBB
         }
-    interface " " as MNI
+    interface " " as MBI
 
-    MNI - MN
-    TA -( MNI
+    MBI -- MB
+    TA -( MBI
 
-    clients --> DBC
-    DBC --> clients
+    binance --> DBB
+    DBB --> binance
 
-    rectangle "Microservice Trades" as MT {
-        component "Trades" as trades
-        database "Database Trades <$database{scale=0.33}>" as DBT
+    rectangle "Microservice Interactive Brokers" as MIB {
+        component "Interactive Brokers Handler" as brokers
+        database "Database Interactive Brokers <$database{scale=0.33}>" as DBIB
         }
-    interface " " as MTI
+    interface " " as MIBI
 
-    MTI - MT
-    TA -( MTI
+    MIBI - MIB
+    TA -( MIBI
 
-    trades --> DBT
-    DBT --> trades
+    brokers --> DBIB
+    DBIB --> brokers
 
+    rectangle "Microservice Coinbase" as MC {
+    component "Interactive Coinbase" as coinbase
+    database "Database coinbase <$database{scale=0.33}>" as DBC
+    }
+    interface " " as MCI
+
+    MCI - MC
+    TA -( MCI
+
+    coinbase --> DBC
+    DBC --> coinbase
 
 
 API --( TAI 
@@ -4301,31 +4331,45 @@ node "Trading platforms" as platformsnode{
     }
 }
 
-cloud "Cloud" as cloudclients {
-    rectangle "Container - Microservice Clients" as containerclients {
-        node "<<executionenvironment>>: Python" as pythonclients {
-            component "Clients" as clients
+
+cloud "Cloud for Binance Handler" as cloudbinance {
+    rectangle "Container - Microservice Binance Handler" as containerbinance {
+        node "<<executionenvironment>>: Python" as pythonbinance {
+            component "Binance Handler" as binance
             }
-        component "Database Clients <$database{scale=0.33}>" as DBC
+        component "Database Binance <$database{scale=0.33}>" as DBB
     }
 }
 
-cloud "Cloud" as cloudtrades {
-    rectangle "Container - Microservice Trades" as containertrades {
-        node "<<executionenvironment>>: Python" as pythontrades {
-            component "Trades" as trades
+cloud "Cloud for Coinbase Handler" as cloudcoinbase {
+    rectangle "Container - Microservice Coinbase Handler" as containercoinbase {
+        node "<<executionenvironment>>: Python" as pythoncoinbase {
+            component "Coinbase Handler" as coinbase
             }
-        component "Database Trades <$database{scale=0.33}>" as DBT
+        component "Database Coinbase <$database{scale=0.33}>" as DBC
     }
 }
 
-trades -- DBT : <<internet>>
+cloud "Cloud for Interactive Brokers Handler" as cloudbrokers {
+    rectangle "Container - Microservice Interactive Brokers Handler" as containerbrokers {
+        node "<<executionenvironment>>: Python" as pythonbrokers {
+            component "Interactive Brokers Handler" as brokers
+            }
+        component "Database Interactive Brokers <$database{scale=0.33}>" as DBIB
+    }
+}
 
-clients -- DBC : <<internet>>
+brokers -- DBIB : <<internet>>
 
-containerclients -- appnode : <<HTTPS>>
+coinbase -- DBC : <<internet>>
 
-containertrades - appnode : <<HTTPS>>
+binance -- DBB : <<internet>>
+
+containerbrokers -- appnode : <<HTTPS>>
+
+containerbinance -- appnode : <<HTTPS>>
+
+containercoinbase - appnode : <<HTTPS>>
 
 appnode -- webnode : <<internet>>
 
